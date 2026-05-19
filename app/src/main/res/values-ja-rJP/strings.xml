@@ -73,10 +73,10 @@
     <string name="essentials_on_display_random_shapes_title">ランダムな形</string>
     <string name="essentials_on_display_random_shapes_desc">Use various Material 3 shapes for the album art</string>
     <string name="essentials_on_display_album_art_title">アルバムアート</string>
-    <string name="essentials_on_display_clock_title">Clock</string>
-    <string name="essentials_on_display_force_fill_while_charging_title">Always use while charging</string>
+    <string name="essentials_on_display_clock_title">時計</string>
+    <string name="essentials_on_display_force_fill_while_charging_title">充電中は必ず使用</string>
     <string name="essentials_on_display_force_fill_while_charging_desc">Force Fill mode when the device is plugged in regardless of the selected mode</string>
-    <string name="label_size">Size</string>
+    <string name="label_size">サイズ</string>
     <string name="feat_notification_glance_title">通知を表示</string>
     <string name="feat_notification_glance_desc">Keep AOD on while notifications are pending</string>
     <string name="notification_glance_same_as_lighting_title">通知ライトと同じアプリ</string>
@@ -146,8 +146,8 @@
     <string name="action_import_freeze">フリーズアプリリストをインポート</string>
     <string name="freeze_pick_apps_title">フリーズさせるアプリを選択</string>
     <string name="freeze_pick_apps_desc">フリーズできるアプリを選択してください</string>
-    <string name="freeze_show_in_launcher_title">Show in launcher</string>
-    <string name="freeze_show_in_launcher_desc">Add a launcher shortcut for easier access</string>
+    <string name="freeze_show_in_launcher_title">ランチャーに表示</string>
+    <string name="freeze_show_in_launcher_desc">簡単にアクセスするショートカットをランチャーに追加</string>
     <string name="settings_section_automation">自動化</string>
     <string name="freeze_when_locked_title">画面ロック時にフリーズ</string>
     <string name="freeze_delay_title">タイミング</string>
