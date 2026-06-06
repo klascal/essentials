@@ -192,9 +192,9 @@
     <string name="notification_lighting_scale_title">Scala</string>
     <string name="notification_lighting_duration_title">Durata</string>
     <string name="notification_lighting_style_sweep">Scorrimento</string>
-    <string name="notification_lighting_sweep_position_title">Position</string>
-    <string name="notification_lighting_sweep_random_shapes_title">Random shapes</string>
-    <string name="notification_lighting_sweep_thickness_title">Stroke thickness</string>
+    <string name="notification_lighting_sweep_position_title">Posizione</string>
+    <string name="notification_lighting_sweep_random_shapes_title">Forme casuali</string>
+    <string name="notification_lighting_sweep_thickness_title">Spessore del tratto</string>
     <string name="notification_lighting_sweep_pos_left">Sinistra</string>
     <string name="notification_lighting_sweep_pos_center">Centro</string>
     <string name="notification_lighting_sweep_pos_right">Destra</string>
@@ -210,7 +210,7 @@
     <string name="ambient_show_lock_screen_desc">Nessuna sovrapposizione nera</string>
     <!-- Tiles -->
     <string name="action_add">Aggiungi</string>
-    <string name="action_added">Added</string>
+    <string name="action_added">Aggiunto</string>
     <string name="qs_tile_already_added">Già aggiunto</string>
     <string name="qs_tile_requires_android_13">Richiede Android 13 o successivo</string>
     <string name="tile_ui_blur">Sfocatura dell\'interfaccia utente</string>
@@ -221,8 +221,8 @@
     <string name="tile_caffeinate">Caffeina</string>
     <string name="tile_sound_mode">Modalità audio</string>
     <string name="tile_notification_lighting">Illuminazione di notifica</string>
-    <string name="tile_dynamic_night_light">Luce Notturna Dinamica</string>
-    <string name="tile_locked_security">Sicurezza bloccata</string>
+    <string name="tile_dynamic_night_light">Luce notturna dinamica</string>
+    <string name="tile_locked_security">Blocco di sicurezza</string>
     <string name="tile_app_lock">Blocco app</string>
     <string name="tile_mono_audio">Audio mono</string>
     <string name="tile_flashlight">Torcia</string>
@@ -234,16 +234,16 @@
     <string name="tile_active">Attivo</string>
     <string name="tile_inactive">Inattivo</string>
     <string name="tile_developer_options">Opzioni sviluppatore</string>
-    <string name="about_desc_developer_options">Attiva facilmente le Opzioni sviluppatore del sistema da un riquadro QS. Ciò potrebbe ripristinare alcune delle impostazioni dello sviluppatore che hai modificato.</string>
-    <string name="tile_refresh_rate">Refresh Rate</string>
-    <string name="about_desc_refresh_rate_tile">Cycle between the system default and preset refresh rates directly from a Quick Settings tile using Shizuku.</string>
+    <string name="about_desc_developer_options">Attiva o disattiva facilmente le opzioni sviluppatore di sistema da un riquadro delle Impostazioni rapide. L\'operazione potrebbe ripristinare alcune delle impostazioni sviluppatore che hai modificato.</string>
+    <string name="tile_refresh_rate">Frequenza di aggiornamento</string>
+    <string name="about_desc_refresh_rate_tile">Alterna tra la frequenza di aggiornamento predefinita di sistema e quelle preimpostate tramite un riquadro delle Impostazioni rapide usando Shizuku.</string>
     <string name="nfc_tile_label">NFC</string>
     <string name="tile_private_dns">DNS privato</string>
     <string name="tile_private_dns_auto">Automatico</string>
     <string name="tile_private_dns_off">Spento</string>
     <string name="tile_usb_debugging">Debug USB</string>
     <string name="tile_color_picker">Selettore colore</string>
-    <string name="toast_eyedropper_failed">Are you sure you\'re on Androdi 17? (╯°_°）╯</string>
+    <string name="toast_eyedropper_failed">Sei sicuro di essere su Android 17? (╯°_°）╯</string>
     <string name="subtitle_eye_dropper">Contagocce</string>
     <string name="on">Attivo</string>
     <string name="off">Disattivo</string>
