@@ -161,6 +161,7 @@ class MainViewModel : ViewModel() {
     val isShutUpLoading = mutableStateOf(false)
     val isShutUpAttemptShizukuRestart = mutableStateOf(true)
     val shutUpRestoreDelay = mutableIntStateOf(10)
+    val edgeLightingSweepSelectedShapes = mutableStateOf<Set<String>>(emptySet())
 
 
     data class CalendarAccount(
@@ -639,6 +640,11 @@ class MainViewModel : ViewModel() {
                             settingsRepository.getShutUpRestoreDelay()
                     }
 
+                    SettingsRepository.KEY_EDGE_LIGHTING_SWEEP_SELECTED_SHAPES -> {
+                        edgeLightingSweepSelectedShapes.value =
+                            settingsRepository.getEdgeLightingSweepSelectedShapes()
+                    }
+
                     SettingsRepository.KEY_DISABLE_ROTATION_SUGGESTION -> {
                         isDisableRotationSuggestionEnabled.value =
                             settingsRepository.getBoolean(key)
@@ -791,6 +797,8 @@ class MainViewModel : ViewModel() {
             settingsRepository.isShutUpAttemptShizukuRestartEnabled()
         shutUpRestoreDelay.intValue =
             settingsRepository.getShutUpRestoreDelay()
+        edgeLightingSweepSelectedShapes.value =
+            settingsRepository.getEdgeLightingSweepSelectedShapes()
         isDisableRotationSuggestionEnabled.value =
             settingsRepository.getBoolean(SettingsRepository.KEY_DISABLE_ROTATION_SUGGESTION, false)
         lockScreenClockId.value = readCurrentLockScreenClockId(context)
@@ -3411,6 +3419,11 @@ class MainViewModel : ViewModel() {
             SettingsRepository.KEY_EDGE_LIGHTING_SWEEP_RANDOM_SHAPES,
             enabled
         )
+    }
+
+    fun saveEdgeLightingSweepSelectedShapes(shapes: Set<String>) {
+        edgeLightingSweepSelectedShapes.value = shapes
+        settingsRepository.saveEdgeLightingSweepSelectedShapes(shapes)
     }
 
 

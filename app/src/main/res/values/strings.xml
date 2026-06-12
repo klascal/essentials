@@ -206,6 +206,8 @@
     <string name="notification_lighting_sweep_pos_left">Left</string>
     <string name="notification_lighting_sweep_pos_center">Center</string>
     <string name="notification_lighting_sweep_pos_right">Right</string>
+    <string name="notification_lighting_sweep_select_shapes_title">Select Shapes</string>
+    <string name="notification_lighting_sweep_select_shapes_desc">Choose which shapes are used in the sweep animation</string>
     <string name="settings_section_animation">Animation</string>
     <string name="notification_lighting_pulse_count_title">Pulse count</string>
     <string name="notification_lighting_pulse_duration_title">Pulse duration</string>
