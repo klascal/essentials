@@ -1,6 +1,7 @@
 package com.sameerasw.essentials.external
 
 import android.content.Context
+import android.database.Cursor
 import android.os.Bundle
 
 object ExternalRouter {
@@ -8,6 +9,7 @@ object ExternalRouter {
 
     init {
         registerHandler(SettingsExternalHandler())
+        registerHandler(LocationAlarmExternalHandler())
     }
 
     fun registerHandler(handler: ExternalHandler) {
@@ -27,7 +29,7 @@ object ExternalRouter {
         return null
     }
 
-    fun query(context: Context, path: String, extras: Bundle?): Bundle? {
+    fun query(context: Context, path: String, extras: Bundle?): Cursor? {
         val (handler, remaining) = getHandlerAndRemainingPath(path) ?: return null
         return handler.onQuery(context, remaining, extras)
     }

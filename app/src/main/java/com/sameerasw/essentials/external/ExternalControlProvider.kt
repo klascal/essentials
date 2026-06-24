@@ -13,7 +13,6 @@ class ExternalControlProvider : ContentProvider() {
         return true
     }
 
-    @Suppress("DEPRECATION")
     override fun query(
         uri: Uri,
         projection: Array<out String>?,
@@ -23,14 +22,7 @@ class ExternalControlProvider : ContentProvider() {
     ): Cursor? {
         val context = context ?: return null
         val path = uri.path ?: return null
-        val result = ExternalRouter.query(context, path, null) ?: return null
-
-        val cursor = MatrixCursor(arrayOf("key", "value", "type"))
-        val key = path.substringAfterLast('/')
-        val value = result.get("value")
-        val type = result.getString("type", "")
-        cursor.addRow(arrayOf(key, value, type))
-        return cursor
+        return ExternalRouter.query(context, path, null)
     }
 
     override fun getType(uri: Uri): String? {

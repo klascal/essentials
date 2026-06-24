@@ -1,29 +1,23 @@
 package com.sameerasw.essentials.external
 
 import android.content.Context
+import android.database.Cursor
+import android.database.MatrixCursor
 import android.os.Bundle
 import com.sameerasw.essentials.data.repository.SettingsRepository
 
 class SettingsExternalHandler : ExternalHandler {
     override val path: String = "settings"
 
-    override fun onQuery(context: Context, remainingPath: String, extras: Bundle?): Bundle? {
+    override fun onQuery(context: Context, remainingPath: String, extras: Bundle?): Cursor? {
         val key = remainingPath
         val prefs = context.getSharedPreferences(SettingsRepository.PREFS_NAME, Context.MODE_PRIVATE)
         if (!prefs.contains(key)) return null
 
         val value = prefs.all[key] ?: return null
-        val bundle = Bundle()
-        when (value) {
-            is Boolean -> bundle.putBoolean("value", value)
-            is String -> bundle.putString("value", value)
-            is Int -> bundle.putInt("value", value)
-            is Float -> bundle.putFloat("value", value)
-            is Long -> bundle.putLong("value", value)
-            else -> bundle.putString("value", value.toString())
-        }
-        bundle.putString("type", value.javaClass.simpleName)
-        return bundle
+        val cursor = MatrixCursor(arrayOf("key", "value", "type"))
+        cursor.addRow(arrayOf(key, value, value.javaClass.simpleName))
+        return cursor
     }
 
     override fun onUpdate(context: Context, remainingPath: String, value: String?, extras: Bundle?): Boolean {
