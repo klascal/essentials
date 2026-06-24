@@ -26,7 +26,8 @@ class LocationAlarmExternalHandler : ExternalHandler {
                 "isEnabled",
                 "isPaused",
                 "lastTravelled",
-                "isActive"
+                "isActive",
+                "iconResName"
             ))
 
             for (alarm in alarms) {
@@ -39,7 +40,8 @@ class LocationAlarmExternalHandler : ExternalHandler {
                     if (alarm.isEnabled) 1 else 0,
                     if (alarm.isPaused) 1 else 0,
                     alarm.lastTravelled ?: 0L,
-                    if (alarm.id == activeId) 1 else 0
+                    if (alarm.id == activeId) 1 else 0,
+                    alarm.iconResName
                 ))
             }
             return cursor
@@ -53,7 +55,8 @@ class LocationAlarmExternalHandler : ExternalHandler {
 
     override fun onAction(context: Context, remainingPath: String, action: String?, extras: Bundle?): Bundle? {
         val repository = LocationReachedRepository(context)
-        when (action) {
+        val targetAction = action ?: remainingPath
+        when (targetAction) {
             "start" -> {
                 val alarmId = extras?.getString("id") ?: return null
                 repository.saveActiveAlarmId(alarmId)
@@ -61,6 +64,7 @@ class LocationAlarmExternalHandler : ExternalHandler {
                 return Bundle().apply { putBoolean("success", true) }
             }
             "stop" -> {
+                repository.saveActiveAlarmId(null)
                 val intent = Intent(context, LocationReachedService::class.java).apply {
                     this.action = LocationReachedService.ACTION_STOP
                 }
