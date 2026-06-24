@@ -97,7 +97,7 @@ class TravelCompassActivity : ComponentActivity(), SensorEventListener {
             val context = LocalContext.current
             LaunchedEffect(Unit) { viewModel.check(context) }
             val isPitchBlack by viewModel.isPitchBlackThemeEnabled
-            EssentialsTheme(pitchBlackTheme = isPitchBlack) {
+            EssentialsTheme(darkTheme = true, pitchBlackTheme = isPitchBlack) {
                 CompassScreen(
                     azimuth = _azimuth.floatValue,
                     onDismiss = { finish() }
