@@ -45,7 +45,7 @@ fun CrashReportingPicker(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceBright),
+            .background(MaterialTheme.colorScheme.surfaceBright, shape = MaterialTheme.shapes.extraSmall),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         ListItem(

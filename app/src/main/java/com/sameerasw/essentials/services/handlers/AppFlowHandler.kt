@@ -60,8 +60,12 @@ class AppFlowHandler(
                 ACTION_RESTORE_NOW -> {
                     cancelRestoreNotification()
                     val autoPkg = intent.getStringExtra(EXTRA_AUTO_ARCHIVE_PACKAGE)
+                    val pkgName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
                     val settingsRepo = com.sameerasw.essentials.data.repository.SettingsRepository(context ?: return)
-                    restoreShutUpSettings(settingsRepo, autoPkg, forceRestore = true)
+                    val config = if (pkgName != null) {
+                        settingsRepo.loadShutUpConfigs().find { it.packageName == pkgName }
+                    } else null
+                    restoreShutUpSettings(settingsRepo, config, autoPkg, forceRestore = true)
                 }
             }
         }
@@ -106,19 +110,12 @@ class AppFlowHandler(
         val prefs = context.getSharedPreferences("essentials_prefs", Context.MODE_PRIVATE)
         val useUsageAccess = prefs.getBoolean("use_usage_access", false)
 
-        if (isFromUsageStats) {
-            val oldUsagePackage = currentUsageStatsPackage
-            currentUsageStatsPackage = packageName
-            if (oldUsagePackage != null && oldUsagePackage != packageName) {
-                checkShutUpRestore(oldUsagePackage, packageName)
-            }
-        }
-
         val oldPackage = currentPackage
         if (isFromUsageStats == useUsageAccess) {
             currentPackage = packageName
             if (oldPackage != null && oldPackage != packageName) {
                 lastLeaveTimes[oldPackage] = System.currentTimeMillis()
+                checkShutUpRestore(oldPackage, packageName)
             }
             if (packageName != context.packageName && packageName != lockingPackage) {
                 lockingPackage = null
@@ -417,6 +414,7 @@ class AppFlowHandler(
             Log.d("AppFlowHandler", "checkShutUpRestore: Triggering restoration for $oldPackage")
             restoreShutUpSettings(
                 settingsRepository,
+                wasShutUpConfig,
                 if (wasShutUpConfig.autoArchive) wasShutUpConfig.packageName else null
             )
         }
@@ -630,7 +628,10 @@ class AppFlowHandler(
         }
     }
 
-    private fun showRestoreNotification(autoArchivePackage: String?) {
+    private fun showRestoreNotification(
+        wasShutUpConfig: com.sameerasw.essentials.domain.model.ShutUpAppConfig?,
+        autoArchivePackage: String?
+    ) {
         createNotificationChannel()
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -639,6 +640,9 @@ class AppFlowHandler(
             `package` = context.packageName
             if (autoArchivePackage != null) {
                 putExtra(EXTRA_AUTO_ARCHIVE_PACKAGE, autoArchivePackage)
+            }
+            if (wasShutUpConfig != null) {
+                putExtra(EXTRA_PACKAGE_NAME, wasShutUpConfig.packageName)
             }
         }
         val restorePendingIntent = PendingIntent.getBroadcast(
@@ -719,6 +723,7 @@ class AppFlowHandler(
 
     private fun restoreShutUpSettings(
         repository: com.sameerasw.essentials.data.repository.SettingsRepository,
+        wasShutUpConfig: com.sameerasw.essentials.domain.model.ShutUpAppConfig?,
         autoArchivePackage: String? = null,
         forceRestore: Boolean = false
     ) {
@@ -735,7 +740,7 @@ class AppFlowHandler(
             scope.launch {
                 val delaySeconds = repository.getShutUpRestoreDelay()
                 delay(delaySeconds * 1000L)
-                showRestoreNotification(autoArchivePackage)
+                showRestoreNotification(wasShutUpConfig, autoArchivePackage)
             }
             return
         }
@@ -787,8 +792,10 @@ class AppFlowHandler(
             repository.saveShutUpOriginalSettings(emptyMap())
 
             // Wait a bit and Restart Shizuku as ADB might have been toggled back on
-            delay(1000)
-            restartShizuku()
+            if (wasShutUpConfig != null && wasShutUpConfig.disableWirelessDebugging && repository.isShutUpAttemptShizukuRestartEnabled()) {
+                delay(1000)
+                restartShizuku()
+            }
 
             android.widget.Toast.makeText(
                 context,
@@ -804,10 +811,16 @@ class AppFlowHandler(
     }
 
     private fun restartShizuku() {
+        val settingsRepository = com.sameerasw.essentials.data.repository.SettingsRepository(context)
+        val token = settingsRepository.getShizukuAuthToken()
+        if (token.isEmpty()) {
+            Log.w("AppFlowHandler", "Shizuku auth token is missing, cannot restart Shizuku")
+            return
+        }
         try {
             val intent = Intent("moe.shizuku.privileged.api.START").apply {
                 `package` = "moe.shizuku.privileged.api"
-                putExtra("auth", "y95fuaRb9USHiIg724tvTHIs")
+                putExtra("auth", token)
                 addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
             }
             context.sendBroadcast(intent)
