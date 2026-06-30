@@ -427,6 +427,8 @@
     <string name="diy_editor_edit_title">loko jami ma tiimo piire kene</string>
     <string name="feat_link_actions_title">Tic me kubbe</string>
     <string name="feat_link_actions_desc">Tii ki jami ma ki keto i cim mapol</string>
+    <string name="feat_flashlight_title">Flashlight</string>
+    <string name="feat_flashlight_desc">Improve flashlight behavior</string>
     <string name="feat_snooze_notifications_title">Cung ngec ma kimiyo bot jami ma ki tiyo kwede</string>
     <string name="feat_snooze_notifications_desc">Dii ngec ma pe gik</string>
     <string name="feat_qs_tiles_title">Kit me yubu jami oyoto</string>
