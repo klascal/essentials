@@ -162,6 +162,7 @@ class MainViewModel : ViewModel() {
     val isShutUpLoading = mutableStateOf(false)
     val isShutUpAttemptShizukuRestart = mutableStateOf(true)
     val shutUpRestoreDelay = mutableIntStateOf(10)
+    val shutUpRestoreMode = mutableStateOf("Auto")
     val edgeLightingSweepSelectedShapes = mutableStateOf<Set<String>>(emptySet())
 
 
@@ -641,6 +642,11 @@ class MainViewModel : ViewModel() {
                             settingsRepository.getShutUpRestoreDelay()
                     }
 
+                    SettingsRepository.KEY_SHUT_UP_RESTORE_MODE -> {
+                        shutUpRestoreMode.value =
+                            settingsRepository.getShutUpRestoreMode()
+                    }
+
                     SettingsRepository.KEY_EDGE_LIGHTING_SWEEP_SELECTED_SHAPES -> {
                         edgeLightingSweepSelectedShapes.value =
                             settingsRepository.getEdgeLightingSweepSelectedShapes()
@@ -695,6 +701,11 @@ class MainViewModel : ViewModel() {
     fun setShutUpRestoreDelay(delaySeconds: Int) {
         shutUpRestoreDelay.intValue = delaySeconds
         settingsRepository.setShutUpRestoreDelay(delaySeconds)
+    }
+
+    fun setShutUpRestoreMode(mode: String) {
+        shutUpRestoreMode.value = mode
+        settingsRepository.setShutUpRestoreMode(mode)
     }
 
     fun saveShutUpSelectedApps(context: Context, apps: List<AppSelection>) {
@@ -798,6 +809,8 @@ class MainViewModel : ViewModel() {
             settingsRepository.isShutUpAttemptShizukuRestartEnabled()
         shutUpRestoreDelay.intValue =
             settingsRepository.getShutUpRestoreDelay()
+        shutUpRestoreMode.value =
+            settingsRepository.getShutUpRestoreMode()
         edgeLightingSweepSelectedShapes.value =
             settingsRepository.getEdgeLightingSweepSelectedShapes()
         isDisableRotationSuggestionEnabled.value =

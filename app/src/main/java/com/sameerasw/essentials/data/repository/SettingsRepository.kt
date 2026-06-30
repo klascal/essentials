@@ -238,6 +238,7 @@ class SettingsRepository(private val context: Context) {
         const val KEY_SHUT_UP_ORIGINAL_SETTINGS = "shut_up_original_settings"
         const val KEY_SHUT_UP_ATTEMPT_SHIZUKU_RESTART = "shut_up_attempt_shizuku_restart"
         const val KEY_SHUT_UP_RESTORE_DELAY = "shut_up_restore_delay"
+        const val KEY_SHUT_UP_RESTORE_MODE = "shut_up_restore_mode"
         const val KEY_EDGE_LIGHTING_SWEEP_SELECTED_SHAPES = "edge_lighting_sweep_selected_shapes"
         const val KEY_DISABLE_ROTATION_SUGGESTION = "disable_rotation_suggestion"
 
@@ -868,6 +869,12 @@ class SettingsRepository(private val context: Context) {
 
     fun setShutUpRestoreDelay(delaySeconds: Int) =
         putInt(KEY_SHUT_UP_RESTORE_DELAY, delaySeconds)
+
+    fun getShutUpRestoreMode(): String =
+        prefs.getString(KEY_SHUT_UP_RESTORE_MODE, "Auto") ?: "Auto"
+
+    fun setShutUpRestoreMode(mode: String) =
+        putString(KEY_SHUT_UP_RESTORE_MODE, mode)
 
     fun getEdgeLightingSweepSelectedShapes(): Set<String> {
         val defaultShapes = com.sameerasw.essentials.utils.AmbientMusicShapeHelper.allShapesWithNames.map { it.first }.toSet()
