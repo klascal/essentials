@@ -71,6 +71,7 @@ import com.sameerasw.essentials.ui.components.menus.SegmentedDropdownMenu
 import com.sameerasw.essentials.ui.components.menus.SegmentedDropdownMenuItem
 import com.sameerasw.essentials.ui.components.pickers.SegmentedPicker
 import com.sameerasw.essentials.ui.components.sheets.DimWallpaperSettingsSheet
+import com.sameerasw.essentials.ui.components.sheets.ScreenOffSettingsSheet
 import com.sameerasw.essentials.ui.components.sheets.SoundModeSettingsSheet
 import com.sameerasw.essentials.ui.theme.EssentialsTheme
 import com.sameerasw.essentials.utils.AppUtil
@@ -222,6 +223,7 @@ class AutomationEditorActivity : ComponentActivity() {
 
                 // Config Sheets
                 var showDimSettings by remember { mutableStateOf(false) }
+                var showScreenOffSettings by remember { mutableStateOf(false) }
                 var showDeviceEffectsSettings by remember { mutableStateOf(false) }
                 var showSoundModeSettings by remember { mutableStateOf(false) }
                 var showTimeSettings by remember { mutableStateOf(false) }
@@ -583,6 +585,7 @@ class AutomationEditorActivity : ComponentActivity() {
                                                 Action.ToggleFlashlight,
                                                 Action.HapticVibration,
                                                 Action.DimWallpaper(),
+                                                Action.ScreenOff(),
                                                 Action.SoundMode(),
                                                 Action.TurnOnLowPower,
                                                 Action.TurnOffLowPower
@@ -658,14 +661,16 @@ class AutomationEditorActivity : ComponentActivity() {
                                                         }
                                                     },
                                                     onSettingsClick = {
-                                                        configAction = resolvedAction
-                                                        if (resolvedAction is Action.DimWallpaper) {
-                                                            showDimSettings = true
-                                                        } else if (resolvedAction is Action.DeviceEffects) {
-                                                            showDeviceEffectsSettings = true
-                                                        } else if (resolvedAction is Action.SoundMode) {
-                                                            showSoundModeSettings = true
-                                                        }
+                                                         configAction = resolvedAction
+                                                         if (resolvedAction is Action.DimWallpaper) {
+                                                             showDimSettings = true
+                                                         } else if (resolvedAction is Action.ScreenOff) {
+                                                             showScreenOffSettings = true
+                                                         } else if (resolvedAction is Action.DeviceEffects) {
+                                                             showDeviceEffectsSettings = true
+                                                         } else if (resolvedAction is Action.SoundMode) {
+                                                             showSoundModeSettings = true
+                                                         }
                                                     }
                                                 )
                                             }
@@ -698,6 +703,25 @@ class AutomationEditorActivity : ComponentActivity() {
                                 onSave = { newAction ->
                                     showDimSettings = false
                                     // Update the selection with configured action
+                                    when (automationType) {
+                                        Automation.Type.TRIGGER -> selectedAction = newAction
+                                        Automation.Type.ACTION_SHORTCUT -> selectedAction = newAction
+                                        Automation.Type.STATE, Automation.Type.APP -> {
+                                            if (selectedActionTab == 0) selectedInAction = newAction
+                                            else selectedOutAction = newAction
+                                        }
+                                    }
+                                    configAction = null
+                                }
+                            )
+                        }
+
+                        if (showScreenOffSettings && configAction is Action.ScreenOff) {
+                            ScreenOffSettingsSheet(
+                                initialAction = configAction as Action.ScreenOff,
+                                onDismiss = { showScreenOffSettings = false },
+                                onSave = { newAction ->
+                                    showScreenOffSettings = false
                                     when (automationType) {
                                         Automation.Type.TRIGGER -> selectedAction = newAction
                                         Automation.Type.ACTION_SHORTCUT -> selectedAction = newAction

@@ -5,6 +5,8 @@ import androidx.annotation.Keep
 import androidx.annotation.StringRes
 import com.google.gson.annotations.SerializedName
 import com.sameerasw.essentials.R
+import com.sameerasw.essentials.domain.ScreenOffMethod
+import com.sameerasw.essentials.domain.HapticFeedbackType
 
 @Keep
 sealed interface Action {
@@ -115,5 +117,17 @@ sealed interface Action {
     data object TurnOffLowPower : Action {
         override val title: Int = R.string.diy_action_low_power_off
         override val icon: Int = R.drawable.rounded_battery_android_frame_shield_24
+    }
+
+    @Keep
+    data class ScreenOff(
+        @SerializedName("method") val method: ScreenOffMethod = ScreenOffMethod.ACCESSIBILITY,
+        @SerializedName("haptic") val haptic: HapticFeedbackType = HapticFeedbackType.NONE
+    ) : Action {
+        override val title: Int get() = R.string.diy_action_screen_off
+        override val icon: Int get() = R.drawable.rounded_mobile_off_24
+        override val isConfigurable: Boolean = true
+        override val permissions: List<String>
+            get() = if (method == ScreenOffMethod.INPUT) listOf("shizuku", "root") else emptyList()
     }
 }

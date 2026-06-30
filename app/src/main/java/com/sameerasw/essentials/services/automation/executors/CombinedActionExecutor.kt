@@ -1,10 +1,21 @@
 package com.sameerasw.essentials.services.automation.executors
 
 import android.content.Context
+import android.content.Intent
 import android.hardware.camera2.CameraManager
 import android.media.AudioManager
 import android.os.Build
+import android.os.Vibrator
+import android.os.VibratorManager
+import android.provider.Settings
+import android.view.KeyEvent
+import android.widget.Toast
 import com.sameerasw.essentials.domain.diy.Action
+import com.sameerasw.essentials.domain.ScreenOffMethod
+import com.sameerasw.essentials.domain.HapticFeedbackType
+import com.sameerasw.essentials.services.tiles.ScreenOffAccessibilityService
+import com.sameerasw.essentials.utils.ShellUtils
+import com.sameerasw.essentials.utils.performHapticFeedback
 
 object CombinedActionExecutor {
 
@@ -193,6 +204,45 @@ object CombinedActionExecutor {
                         audioManager.ringerMode = ringerMode
                     } catch (e: Exception) {
                         e.printStackTrace()
+                    }
+                }
+
+                is Action.ScreenOff -> {
+                    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val manager =
+                            context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as android.os.VibratorManager
+                        manager.defaultVibrator
+                    } else {
+                        @Suppress("DEPRECATION")
+                        context.getSystemService(Context.VIBRATOR_SERVICE) as android.os.Vibrator
+                    }
+                    if (action.haptic != HapticFeedbackType.NONE) {
+                        performHapticFeedback(vibrator, action.haptic)
+                    }
+
+                    when (action.method) {
+                        ScreenOffMethod.ACCESSIBILITY -> {
+                            val enabledServices = Settings.Secure.getString(
+                                context.contentResolver,
+                                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+                            )
+                            val hasAccess = enabledServices?.contains("com.sameerasw.essentials.services.tiles.ScreenOffAccessibilityService") == true
+                            if (hasAccess) {
+                                val serviceIntent = Intent(context, ScreenOffAccessibilityService::class.java).apply {
+                                    this.action = "LOCK_SCREEN"
+                                }
+                                context.startService(serviceIntent)
+                            } else {
+                                Toast.makeText(context, "Missing Accessibility permission", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        ScreenOffMethod.INPUT -> {
+                            if (ShellUtils.hasPermission(context)) {
+                                ShellUtils.runCommand(context, "input keyevent ${KeyEvent.KEYCODE_POWER}")
+                            } else {
+                                Toast.makeText(context, "Missing Shizuku/Root permission", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 }
             }
