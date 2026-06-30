@@ -12,6 +12,8 @@
     <string name="freeze_activity_subtitle">Desactivar aplicaciones que rara vez se usan</string>
     <string name="freeze_shortcut_short_label">Congelación de aplicaciones</string>
     <string name="freeze_shortcut_long_label">Abrir aplicación congelada</string>
+    <string name="action_shortcut_short_label">Action</string>
+    <string name="action_shortcut_long_label">Launch action shortcut</string>
     <string name="frozen_app_shortcut_label">Aplicación congelada</string>
     <string name="screen_off_widget_label">Widget vacío para apagar la pantalla</string>
     <string name="app_freezing_tile_label">Congelación de aplicaciones</string>
@@ -424,6 +426,8 @@ Sin embargo, sí te permite reanudarla desde la lista de aplicaciones del lanzad
     <string name="diy_create_trigger_desc">Programar una acción para que se active al producirse una observación</string>
     <string name="diy_create_state_title">Automatización por estado</string>
     <string name="diy_create_state_desc">Programar una acción para ejecutarse según el estado de una condición de entrada y salida</string>
+    <string name="diy_create_action_shortcut_title">Action Shortcut</string>
+    <string name="diy_create_action_shortcut_desc">Launch shortcut to trigger action</string>
     <string name="diy_editor_new_title">Nueva automatización</string>
     <string name="diy_editor_edit_title">Editar automatización</string>
     <string name="feat_link_actions_title">Vincular acciones</string>
@@ -819,6 +823,15 @@ Cuando llegue un mensaje o alerta de una aplicación seleccionada, la Pantalla s
     <string name="diy_action_low_power_on">Activar el modo de bajo consumo</string>
     <string name="diy_action_low_power_off">Desactivar el modo de bajo consumo</string>
     <string name="diy_action_dim_wallpaper">Atenuar el fondo de pantalla</string>
+    <string name="diy_action_screen_off">Screen Off</string>
+    <string name="diy_action_media_play_pause">Media Play/Pause</string>
+    <string name="diy_action_media_next">Media Next</string>
+    <string name="diy_action_media_previous">Media Previous</string>
+    <string name="diy_action_ai_assistant">AI Assistant</string>
+    <string name="diy_action_take_screenshot">Take Screenshot</string>
+    <string name="diy_action_toggle_media_volume">Toggle Media Volume</string>
+    <string name="diy_action_like_current_song">Like Current Song</string>
+    <string name="diy_action_circle_to_search">Circle to Search</string>
     <string name="diy_dim_wallpaper_desc">Esta acción requiere Shizuku o acceso Root para ajustar el atenuado del fondo de pantalla del sistema.</string>
     <string name="diy_select_trigger">Seleccionar desencadenante</string>
     <string name="diy_create_app_title">Aplicación</string>
