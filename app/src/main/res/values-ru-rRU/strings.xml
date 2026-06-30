@@ -180,6 +180,7 @@
     <string name="flashlight_pulse_facedown_title">Только экраном вниз</string>
     <string name="flashlight_pulse_same_as_lighting_title">Те же приложения, что и подсветка уведомлений</string>
     <string name="flashlight_pulse_max_brightness">Максимальная яркость</string>
+    <string name="flashlight_pulse_disable_on_dnd_title">Do not trigger on DND</string>
     <string name="flashlight_pulse_preview">Предпросмотр</string>
     <string name="settings_section_style">Стиль</string>
     <string name="notification_lighting_stroke_adjustment_section">Регулировка хода</string>
