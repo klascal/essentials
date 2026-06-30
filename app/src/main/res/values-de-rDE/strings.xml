@@ -429,6 +429,7 @@
     <string name="feat_link_actions_desc">Links mit mehreren Apps verwalten</string>
     <string name="feat_flashlight_title">Flashlight</string>
     <string name="feat_flashlight_desc">Improve flashlight behavior</string>
+    <string name="label_restore_mode">Restore mode</string>
     <string name="feat_snooze_notifications_title">Systembenachrichtigungen stumm schalten</string>
     <string name="feat_snooze_notifications_desc">Persistente Benachrichtigungen stumm schalten</string>
     <string name="feat_qs_tiles_title">Schnelleinstellungs-Kacheln</string>
