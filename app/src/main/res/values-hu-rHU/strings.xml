@@ -429,6 +429,7 @@
     <string name="feat_link_actions_desc">Kezelje a hivatkozásokat több alkalmazással</string>
     <string name="feat_flashlight_title">Flashlight</string>
     <string name="feat_flashlight_desc">Improve flashlight behavior</string>
+    <string name="label_restore_mode">Restore mode</string>
     <string name="feat_snooze_notifications_title">Rendszerértesítések elhalasztása</string>
     <string name="feat_snooze_notifications_desc">Állandó értesítések elhalasztása</string>
     <string name="feat_qs_tiles_title">Gyorsbeállítások csempe</string>
