@@ -347,6 +347,7 @@ fun PixelSearchbarSettingsUI(
                 RoundedCardContainer {
                     ListItem(
                         onClick = {
+                            HapticUtil.performVirtualKeyHaptic(view)
                             val intent = Intent(context, com.sameerasw.essentials.MainActivity::class.java).apply {
                                 putExtra("target_tab", com.sameerasw.essentials.domain.DIYTabs.DIY.name)
                             }
@@ -361,22 +362,30 @@ fun PixelSearchbarSettingsUI(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         },
+                        trailingContent = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.rounded_chevron_right_24),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(R.string.pixel_searchbar_tap_action_desc),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
                         colors = ListItemDefaults.colors(
                             containerColor = MaterialTheme.colorScheme.surfaceBright
                         )
                     ) {
-                        Column {
-                            Text(
-                                text = stringResource(R.string.pixel_searchbar_tap_action_title),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = stringResource(R.string.pixel_searchbar_tap_action_desc),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        Text(
+                            text = stringResource(R.string.pixel_searchbar_tap_action_title),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }
