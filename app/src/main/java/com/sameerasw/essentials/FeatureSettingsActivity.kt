@@ -246,6 +246,15 @@ class FeatureSettingsActivity : AppCompatActivity() {
                             delay(3000)
                             fabExpanded = false
                         }
+                        if (featureId == "Watch") {
+                            val messageClient = com.google.android.gms.wearable.Wearable.getMessageClient(context)
+                            val nodeClient = com.google.android.gms.wearable.Wearable.getNodeClient(context)
+                            nodeClient.connectedNodes.addOnSuccessListener { nodes ->
+                                for (node in nodes) {
+                                    messageClient.sendMessage(node.id, "/request_watch_status", byteArrayOf())
+                                }
+                            }
+                        }
                     }
 
                     // Help Sheet State
