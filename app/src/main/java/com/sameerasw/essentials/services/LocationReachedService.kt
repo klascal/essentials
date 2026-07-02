@@ -119,14 +119,14 @@ class LocationReachedService : Service() {
         }
 
         repository.saveActiveAlarmId(null)
-        saveTravelProgress(false, null, 0, null)
+        saveTravelProgress(false, null, 0, null, null)
         serviceScope.launch {
             delay(500)
             stopSelf()
         }
     }
 
-    private fun saveTravelProgress(active: Boolean, alarm: LocationAlarm?, progressPercent: Int, etaText: String?) {
+    private fun saveTravelProgress(active: Boolean, alarm: LocationAlarm?, progressPercent: Int, etaText: String?, distanceText: String?) {
         val prefs = getSharedPreferences("essentials_prefs", MODE_PRIVATE)
         val editor = prefs.edit()
         if (active && alarm != null) {
@@ -134,9 +134,12 @@ class LocationReachedService : Service() {
             editor.putString("travel_name", alarm.name)
             editor.putFloat("travel_progress", progressPercent.toFloat() / 100f)
             editor.putString("travel_remaining_time", etaText ?: getString(R.string.location_reached_calculating))
+            editor.putString("travel_remaining_distance", distanceText ?: getString(R.string.location_reached_calculating))
             editor.putString("travel_icon_name", alarm.iconResName)
             editor.putBoolean("travel_is_paused", alarm.isPaused)
-            if (progressPercent < 100) {
+            if (progressPercent >= 100) {
+                editor.putBoolean("travel_arrived", true)
+            } else {
                 editor.putBoolean("travel_arrived", false)
             }
         } else {
@@ -154,7 +157,7 @@ class LocationReachedService : Service() {
         val alarms = repository.getAlarms()
         val alarm = alarms.find { it.id == activeId }
         if (alarm != null) {
-            saveTravelProgress(true, alarm, 0, null)
+            saveTravelProgress(true, alarm, 0, null, null)
             updateNotification(null)
         }
     }
@@ -205,10 +208,7 @@ class LocationReachedService : Service() {
     private fun triggerArrivalAlarm() {
         val activeId = repository.getActiveAlarmId()
         val alarm = repository.getAlarms().find { it.id == activeId }
-        saveTravelProgress(alarm != null, alarm, 100, "Arrived")
-        val prefs = getSharedPreferences("essentials_prefs", MODE_PRIVATE)
-        prefs.edit().putBoolean("travel_arrived", true).apply()
-        DeviceInfoSyncManager.forceSync(this)
+        saveTravelProgress(alarm != null, alarm, 100, "Arrived", "0 m")
 
         val channelId = "location_reached_channel"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -275,9 +275,14 @@ class LocationReachedService : Service() {
             }
         }
 
+        val distanceText = distanceKm?.let {
+            if (it < 1.0) getString(R.string.location_reached_dist_m, (it * 1000).toInt())
+            else getString(R.string.location_reached_dist_km, it)
+        } ?: getString(R.string.location_reached_calculating)
+
         val activeId = repository.getActiveAlarmId()
         val alarm = repository.getAlarms().find { it.id == activeId }
-        saveTravelProgress(alarm != null, alarm, progressPercent, etaText)
+        saveTravelProgress(alarm != null, alarm, progressPercent, etaText, distanceText)
 
         val notification = buildOngoingNotification(distanceKm, progressPercent, etaText)
         notificationManager.notify(NOTIFICATION_ID, notification)
