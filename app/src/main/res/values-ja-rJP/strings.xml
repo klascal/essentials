@@ -1271,6 +1271,10 @@
     <string name="watch_help_title">ウォッチにインストール</string>
     <string name="watch_help_description">ウォッチの機能を利用するには、Wear OSウォッチにEssentialsコンパニオンアプリをインストールする必要があります。下のボタンをクリックすると、ウォッチでPlayストアが直接開きます。</string>
     <string name="watch_help_open_play_store">Open on Watch</string>
+    <string name="feat_watch_controls_title">Customize</string>
+    <string name="feat_watch_controls_desc">Customize WearOS app controls</string>
+    <string name="watch_controls_long_press_hint">Long press to enable or disable buttons</string>
+    <string name="watch_controls_reorder_title">Reorder watch controls</string>
     <string name="cat_interaction">Interaction</string>
     <string name="cat_interface">Interface</string>
     <string name="cat_display">ディスプレイ</string>
