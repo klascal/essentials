@@ -48,10 +48,10 @@ abstract class Feature(
     abstract fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean)
 
     open fun onClick(context: Context, viewModel: MainViewModel) {
-        val targetFeatureId = parentFeatureId ?: id
+        val targetFeatureId = if (!hasMoreSettings && parentFeatureId != null) parentFeatureId else id
         context.startActivity(Intent(context, FeatureSettingsActivity::class.java).apply {
             putExtra("feature", targetFeatureId)
-            if (parentFeatureId != null) {
+            if (!hasMoreSettings && parentFeatureId != null) {
                 putExtra("highlight_setting", id)
             }
         })
