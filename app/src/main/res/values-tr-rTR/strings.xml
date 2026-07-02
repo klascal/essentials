@@ -1272,6 +1272,10 @@
     <string name="watch_help_title">Saate yükle</string>
     <string name="watch_help_description">Saat özelliklerini kullanmak için Wear OS saatinize Essentials yardımcı uygulamasını yüklemeniz gerekir. Play Store\'u doğrudan saatinizde açmak için aşağıdaki düğmeye tıklayın.</string>
     <string name="watch_help_open_play_store">Saatte Aç</string>
+    <string name="feat_watch_controls_title">Customize</string>
+    <string name="feat_watch_controls_desc">Customize WearOS app controls</string>
+    <string name="watch_controls_long_press_hint">Long press to enable or disable buttons</string>
+    <string name="watch_controls_reorder_title">Reorder watch controls</string>
     <string name="cat_interaction">Etkileşim</string>
     <string name="cat_interface">Arayüz</string>
     <string name="cat_display">Görüntülemek</string>
