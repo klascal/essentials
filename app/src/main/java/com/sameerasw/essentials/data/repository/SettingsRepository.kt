@@ -44,6 +44,14 @@ class SettingsRepository(private val context: Context) {
         const val PREFS_NAME = "essentials_prefs"
 
         // Keys
+        const val KEY_DAILY_WALLPAPER_LAST_ID = "daily_wallpaper_last_id"
+        const val KEY_DAILY_WALLPAPER_LAST_URL_MOBILE = "daily_wallpaper_last_url_mobile"
+        const val KEY_DAILY_WALLPAPER_LAST_URL = "daily_wallpaper_last_url"
+        const val KEY_DAILY_WALLPAPER_AUTHOR_NAME = "daily_wallpaper_author_name"
+        const val KEY_DAILY_WALLPAPER_AUTHOR_LINK = "daily_wallpaper_author_link"
+        const val KEY_DAILY_WALLPAPER_PHOTO_LINK = "daily_wallpaper_photo_link"
+        const val KEY_DAILY_WALLPAPER_UPDATED_AT = "daily_wallpaper_updated_at"
+
         const val KEY_WIDGET_ENABLED = "widget_enabled"
         const val KEY_STATUS_BAR_ICON_CONTROL_ENABLED = "status_bar_icon_control_enabled"
         const val KEY_MAPS_POWER_SAVING_ENABLED = "maps_power_saving_enabled"

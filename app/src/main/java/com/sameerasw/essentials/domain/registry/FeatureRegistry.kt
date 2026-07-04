@@ -1043,6 +1043,21 @@ object FeatureRegistry {
         },
 
         object : Feature(
+            id = "Daily Wallpaper",
+            title = R.string.feat_daily_wallpaper_title,
+            iconRes = R.drawable.rounded_wallpaper_24,
+            category = R.string.cat_tools,
+            description = R.string.feat_daily_wallpaper_desc,
+            showToggle = false
+        ) {
+            override fun isEnabled(viewModel: MainViewModel) = true
+            override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}
+            override fun onClick(context: Context, viewModel: MainViewModel) {
+                context.startActivity(Intent(context, com.sameerasw.essentials.ui.activities.WallpaperActivity::class.java))
+            }
+        },
+
+        object : Feature(
             id = "Calendar Sync",
             title = R.string.feat_calendar_sync_title,
             iconRes = R.drawable.rounded_sync_24, // Use sync icon

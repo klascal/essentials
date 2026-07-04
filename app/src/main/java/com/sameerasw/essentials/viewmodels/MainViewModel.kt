@@ -896,6 +896,7 @@ class MainViewModel : ViewModel() {
         lockScreenClockSeedColor.intValue = settingsRepository.getLockScreenClockSeedColor()
         loadShutUpConfigs()
         recentSearches.value = settingsRepository.getRecentSearches()
+        loadCachedWallpaper()
 
         if (isHideGestureBarEnabled.value) {
             applyHideGestureBar(context, true)
@@ -3917,5 +3918,61 @@ class MainViewModel : ViewModel() {
         }
         addedQSTiles.value =
             tilesString.split(",").map { it.trim() }.filter { it.isNotBlank() }.toSet()
+    }
+
+    // Daily Wallpaper Support
+    val dailyWallpaperInfo = mutableStateOf<com.sameerasw.essentials.domain.model.WallpaperInfo?>(null)
+    val isWallpaperLoading = mutableStateOf(false)
+    private val wallpaperRepository = com.sameerasw.essentials.data.repository.WallpaperRepository()
+
+    fun loadCachedWallpaper() {
+        if (!::settingsRepository.isInitialized) return
+        val id = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_ID) ?: return
+        val url = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL) ?: ""
+        val urlMobile = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL_MOBILE) ?: ""
+        val urlFull = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL) ?: ""
+        val authorName = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_AUTHOR_NAME) ?: ""
+        val authorLink = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_AUTHOR_LINK) ?: ""
+        val photoLink = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_PHOTO_LINK) ?: ""
+        val updatedAt = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_UPDATED_AT) ?: ""
+
+        dailyWallpaperInfo.value = com.sameerasw.essentials.domain.model.WallpaperInfo(
+            id = id,
+            url = url,
+            urlMobile = urlMobile,
+            urlFull = urlFull,
+            authorName = authorName,
+            authorUsername = "",
+            authorLink = authorLink,
+            photoLink = photoLink,
+            updatedAt = updatedAt
+        )
+    }
+
+    fun fetchTodayWallpaper(context: Context) {
+        viewModelScope.launch {
+            isWallpaperLoading.value = true
+            val info = wallpaperRepository.fetchTodayWallpaper()
+            if (info != null) {
+                dailyWallpaperInfo.value = info
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_ID, info.id)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL, info.url)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL_MOBILE, info.urlMobile)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_AUTHOR_NAME, info.authorName)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_AUTHOR_LINK, info.authorLink)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_PHOTO_LINK, info.photoLink)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_UPDATED_AT, info.updatedAt)
+            }
+            isWallpaperLoading.value = false
+        }
+    }
+
+    fun applyWallpaper(context: Context, url: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            isWallpaperLoading.value = true
+            val success = wallpaperRepository.applyWallpaper(context, url)
+            isWallpaperLoading.value = false
+            onResult(success)
+        }
     }
 }
