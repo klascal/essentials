@@ -745,6 +745,12 @@ object FeatureRegistry {
                     R.string.search_remap_flashlight_desc,
                     "flashlight_toggle",
                     R.array.keywords_flashlight
+                ),
+                SearchSetting(
+                    R.string.search_flashlight_pocket_title,
+                    R.string.search_flashlight_pocket_desc,
+                    "flashlight_options",
+                    R.array.keywords_pocket_detection
                 )
             ),
             parentFeatureId = "Input",
@@ -912,6 +918,22 @@ object FeatureRegistry {
             override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}
         },
 
+        object : Feature(
+            id = "Pocket mode",
+            title = R.string.feat_pocket_mode_title,
+            iconRes = R.drawable.ic_pocket_mode,
+            category = R.string.cat_display,
+            description = R.string.feat_pocket_mode_desc,
+            permissionKeys = listOf("ACCESSIBILITY"),
+            aboutDescription = R.string.feat_pocket_mode_desc,
+            parentFeatureId = "Display",
+            hasMoreSettings = true,
+        ) {
+            override fun isEnabled(viewModel: MainViewModel) = viewModel.isPocketModeEnabled.value
+
+            override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) =
+                viewModel.setPocketModeEnabled(enabled)
+        },
         object : Feature(
             id = "Location reached",
             title = R.string.feat_location_reached_title,
