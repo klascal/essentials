@@ -44,6 +44,17 @@ class SettingsRepository(private val context: Context) {
         const val PREFS_NAME = "essentials_prefs"
 
         // Keys
+        const val KEY_DAILY_WALLPAPER_LAST_ID = "daily_wallpaper_last_id"
+        const val KEY_DAILY_WALLPAPER_LAST_URL_MOBILE = "daily_wallpaper_last_url_mobile"
+        const val KEY_DAILY_WALLPAPER_LAST_URL = "daily_wallpaper_last_url"
+        const val KEY_DAILY_WALLPAPER_AUTHOR_NAME = "daily_wallpaper_author_name"
+        const val KEY_DAILY_WALLPAPER_AUTHOR_LINK = "daily_wallpaper_author_link"
+        const val KEY_DAILY_WALLPAPER_PHOTO_LINK = "daily_wallpaper_photo_link"
+        const val KEY_DAILY_WALLPAPER_UPDATED_AT = "daily_wallpaper_updated_at"
+        const val KEY_DAILY_WALLPAPER_AUTO_UPDATE = "daily_wallpaper_auto_update"
+        const val KEY_DAILY_WALLPAPER_APPLY_HOME = "daily_wallpaper_apply_home"
+        const val KEY_DAILY_WALLPAPER_APPLY_LOCK = "daily_wallpaper_apply_lock"
+
         const val KEY_WIDGET_ENABLED = "widget_enabled"
         const val KEY_STATUS_BAR_ICON_CONTROL_ENABLED = "status_bar_icon_control_enabled"
         const val KEY_MAPS_POWER_SAVING_ENABLED = "maps_power_saving_enabled"
@@ -191,6 +202,7 @@ class SettingsRepository(private val context: Context) {
         const val KEY_REMOTE_LOCK_MODE = "remote_lock_mode" // 0: Screen off, 1: Lock
 
         const val KEY_GITHUB_ACCESS_TOKEN = "github_access_token"
+        const val KEY_GITHUB_WORKFLOW_TOKEN = "github_workflow_token"
         const val KEY_GITHUB_USER_PROFILE = "github_user_profile"
 
         const val KEY_FLASHLIGHT_PULSE_SELECTED_APPS = "flashlight_pulse_selected_apps"
@@ -1043,6 +1055,25 @@ class SettingsRepository(private val context: Context) {
         awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }
 
+    fun getGitHubWorkflowToken(): String? {
+        return prefs.getString(KEY_GITHUB_WORKFLOW_TOKEN, null)
+    }
+
+    fun saveGitHubWorkflowToken(token: String?) {
+        prefs.edit().putString(KEY_GITHUB_WORKFLOW_TOKEN, token).apply()
+    }
+
+    val gitHubWorkflowToken: Flow<String?> = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == KEY_GITHUB_WORKFLOW_TOKEN) {
+                trySend(getString(KEY_GITHUB_WORKFLOW_TOKEN))
+            }
+        }
+        trySend(getString(KEY_GITHUB_WORKFLOW_TOKEN))
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+
     fun saveGitHubUser(user: GitHubUser?) {
         if (user == null) {
             prefs.edit().remove(KEY_GITHUB_USER_PROFILE).apply()
@@ -1100,14 +1131,18 @@ class SettingsRepository(private val context: Context) {
     fun saveLiveWallpaperPlaybackTrigger(trigger: String) =
         liveWallpaperPrefs.edit().putString(KEY_LIVE_WALLPAPER_PLAYBACK_TRIGGER, trigger).apply()
 
-    fun getLiveWallpaperCustomVideos(): List<String> =
-        liveWallpaperPrefs.getString(KEY_LIVE_WALLPAPER_CUSTOM_VIDEOS, "")?.split(",")
-            ?.filter { it.isNotEmpty() }
-            ?: emptyList()
+    fun getLiveWallpaperCustomVideos(): List<String> {
+        val stored = liveWallpaperPrefs.getString(KEY_LIVE_WALLPAPER_CUSTOM_VIDEOS, "") ?: ""
+        val delimiter = if (!stored.contains("\n") && stored.contains(",")) "," else "\n"
+        return stored.split(delimiter)
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .distinct()
+    }
 
     fun saveLiveWallpaperCustomVideos(videos: List<String>) =
         liveWallpaperPrefs.edit()
-            .putString(KEY_LIVE_WALLPAPER_CUSTOM_VIDEOS, videos.joinToString(",")).apply()
+            .putString(KEY_LIVE_WALLPAPER_CUSTOM_VIDEOS, videos.filter { it.isNotEmpty() }.distinct().joinToString("\n")).apply()
 
     fun addLiveWallpaperCustomVideo(uri: String) {
         val current = getLiveWallpaperCustomVideos().toMutableList()
@@ -1121,17 +1156,18 @@ class SettingsRepository(private val context: Context) {
     fun getLiveWallpaperAvailableVideos(): List<String> {
         val raws = com.sameerasw.essentials.R.raw::class.java.fields.mapNotNull { field ->
             try {
-                if (field.name == "keep") null else field.name
+                if (field.name.startsWith("loop_")) field.name else null
             } catch (e: Exception) {
                 null
             }
         }
-        return raws + getLiveWallpaperCustomVideos()
+        return (raws + getLiveWallpaperCustomVideos()).filter { it.isNotBlank() }.distinct()
     }
 
     fun removeLiveWallpaperCustomVideo(videoUri: String) {
         val current = getLiveWallpaperCustomVideos().toMutableList()
-        if (current.remove(videoUri)) {
+        val removed = current.removeAll { it == videoUri || it.isBlank() }
+        if (removed) {
             saveLiveWallpaperCustomVideos(current)
             // If the removed video was selected, revert to default
             if (getLiveWallpaperSelectedVideo() == videoUri) {
@@ -1139,6 +1175,18 @@ class SettingsRepository(private val context: Context) {
             }
         }
     }
+
+    fun getDailyWallpaperApplyHome(): Boolean =
+        getBoolean(KEY_DAILY_WALLPAPER_APPLY_HOME, true)
+
+    fun setDailyWallpaperApplyHome(value: Boolean) =
+        putBoolean(KEY_DAILY_WALLPAPER_APPLY_HOME, value)
+
+    fun getDailyWallpaperApplyLock(): Boolean =
+        getBoolean(KEY_DAILY_WALLPAPER_APPLY_LOCK, true)
+
+    fun setDailyWallpaperApplyLock(value: Boolean) =
+        putBoolean(KEY_DAILY_WALLPAPER_APPLY_LOCK, value)
 
     fun getFontScale(): Float {
         return try {

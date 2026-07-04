@@ -812,10 +812,10 @@ object FeatureRegistry {
             title = R.string.feat_live_wallpaper_title,
             iconRes = R.drawable.rounded_slow_motion_video_24,
             category = R.string.cat_interface,
-            parentFeatureId = "Display",
             description = R.string.feat_live_wallpaper_desc,
             aboutDescription = R.string.about_desc_live_wallpaper,
-            showToggle = false
+            showToggle = false,
+            isVisibleInMain = false
         ) {
             override fun isEnabled(viewModel: MainViewModel) = true
             override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}
@@ -1061,6 +1061,21 @@ object FeatureRegistry {
             override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}
             override fun onClick(context: Context, viewModel: MainViewModel) {
                 context.startActivity(Intent(context, WatermarkActivity::class.java))
+            }
+        },
+
+        object : Feature(
+            id = "Daily Wallpaper",
+            title = R.string.feat_daily_wallpaper_title,
+            iconRes = R.drawable.rounded_wallpaper_24,
+            category = R.string.cat_tools,
+            description = R.string.feat_daily_wallpaper_desc,
+            showToggle = false
+        ) {
+            override fun isEnabled(viewModel: MainViewModel) = true
+            override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}
+            override fun onClick(context: Context, viewModel: MainViewModel) {
+                context.startActivity(Intent(context, com.sameerasw.essentials.ui.activities.WallpaperActivity::class.java))
             }
         },
 

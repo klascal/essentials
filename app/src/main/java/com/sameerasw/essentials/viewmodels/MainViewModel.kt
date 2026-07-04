@@ -68,6 +68,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
@@ -322,6 +323,11 @@ class MainViewModel : ViewModel() {
     private var appContext: Context? = null
 
     val gitHubToken = mutableStateOf<String?>(null)
+    val gitHubWorkflowToken = mutableStateOf<String?>(null)
+    val wallpaperTriggerState = mutableStateOf<String?>(null)
+    val workflowAuthState = mutableStateOf<com.sameerasw.essentials.viewmodels.AuthState>(com.sameerasw.essentials.viewmodels.AuthState.Idle)
+    private var workflowPollingJob: kotlinx.coroutines.Job? = null
+    val gitHubUser = mutableStateOf<com.sameerasw.essentials.domain.model.github.GitHubUser?>(null)
 
     private val contentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {
@@ -822,6 +828,7 @@ class MainViewModel : ViewModel() {
         appContext = context.applicationContext
         settingsRepository = SettingsRepository(context)
         updateRepository = UpdateRepository()
+        gitHubUser.value = settingsRepository.getGitHubUser()
 
         // Sync with system per-app language settings
         val currentLocales = AppCompatDelegate.getApplicationLocales()
@@ -914,6 +921,11 @@ class MainViewModel : ViewModel() {
         lockScreenClockSeedColor.intValue = settingsRepository.getLockScreenClockSeedColor()
         loadShutUpConfigs()
         recentSearches.value = settingsRepository.getRecentSearches()
+        loadCachedWallpaper()
+        isDailyWallpaperAutoUpdateEnabled.value = settingsRepository.getBoolean(SettingsRepository.KEY_DAILY_WALLPAPER_AUTO_UPDATE, false)
+        if (isDailyWallpaperAutoUpdateEnabled.value) {
+            schedulePeriodicWallpaperCheck(context)
+        }
 
         if (isHideGestureBarEnabled.value) {
             applyHideGestureBar(context, true)
@@ -1080,6 +1092,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             settingsRepository.gitHubToken.collect {
                 gitHubToken.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            settingsRepository.gitHubWorkflowToken.collect {
+                gitHubWorkflowToken.value = it
             }
         }
 
@@ -1536,6 +1554,7 @@ class MainViewModel : ViewModel() {
         settingsRepository.savePinnedFeatures(current)
 
         appContext?.let { context ->
+            com.sameerasw.essentials.utils.ShortcutUtil.updateLauncherDynamicShortcuts(context)
             val intent = Intent("com.sameerasw.essentials.action.FAVORITES_WIDGET_UPDATE").apply {
                 setPackage(context.packageName)
             }
@@ -1561,6 +1580,90 @@ class MainViewModel : ViewModel() {
     fun setDeveloperModeEnabled(enabled: Boolean, context: Context) {
         isDeveloperModeEnabled.value = enabled
         settingsRepository.putBoolean(SettingsRepository.KEY_DEVELOPER_MODE_ENABLED, enabled)
+    }
+
+    fun startWorkflowAuthFlow(context: Context) {
+        workflowAuthState.value = com.sameerasw.essentials.viewmodels.AuthState.Loading
+        viewModelScope.launch {
+            val authRepo = com.sameerasw.essentials.data.repository.GitHubAuthRepository()
+            val response = authRepo.requestDeviceCodeWithWorkflow()
+            if (response != null) {
+                workflowAuthState.value = com.sameerasw.essentials.viewmodels.AuthState.CodeReceived(
+                    userCode = response.userCode,
+                    verificationUri = response.verificationUri
+                )
+                startWorkflowPolling(response.deviceCode, response.interval, context)
+            } else {
+                workflowAuthState.value = com.sameerasw.essentials.viewmodels.AuthState.Error("Failed to request device code")
+            }
+        }
+    }
+
+    private fun startWorkflowPolling(deviceCode: String, intervalSeconds: Int, context: Context) {
+        workflowPollingJob?.cancel()
+        workflowPollingJob = viewModelScope.launch {
+            val authRepo = com.sameerasw.essentials.data.repository.GitHubAuthRepository()
+            var currentInterval = intervalSeconds * 1000L
+            while (isActive) {
+                kotlinx.coroutines.delay(currentInterval)
+                val tokenResponse = authRepo.pollForToken(deviceCode, intervalSeconds)
+
+                if (tokenResponse != null) {
+                    when {
+                        tokenResponse.accessToken != null -> {
+                            workflowAuthState.value = com.sameerasw.essentials.viewmodels.AuthState.Authenticated(tokenResponse.accessToken)
+                            settingsRepository.saveGitHubWorkflowToken(tokenResponse.accessToken)
+                            workflowPollingJob?.cancel()
+                            return@launch
+                        }
+                        tokenResponse.error == "authorization_pending" -> {
+                            // continue
+                        }
+                        tokenResponse.error == "slow_down" -> {
+                            currentInterval += 5000L
+                        }
+                        tokenResponse.error == "expired_token" -> {
+                            workflowAuthState.value = com.sameerasw.essentials.viewmodels.AuthState.Error("Code expired. Please try again.")
+                            workflowPollingJob?.cancel()
+                            return@launch
+                        }
+                        else -> {
+                            workflowAuthState.value = com.sameerasw.essentials.viewmodels.AuthState.Error("Authentication failed: ${tokenResponse.error}")
+                            workflowPollingJob?.cancel()
+                            return@launch
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun cancelWorkflowAuthFlow() {
+        workflowPollingJob?.cancel()
+        workflowAuthState.value = com.sameerasw.essentials.viewmodels.AuthState.Idle
+    }
+
+    fun triggerWallpaperUpdate(target: String) {
+        val token = settingsRepository.getGitHubWorkflowToken() ?: return
+        wallpaperTriggerState.value = "loading"
+        viewModelScope.launch {
+            val gitHubRepo = com.sameerasw.essentials.data.repository.GitHubRepository()
+            val success = gitHubRepo.triggerWorkflowDispatch(
+                token = token,
+                owner = "sameerasw",
+                repo = "sameerasw.com",
+                workflowFile = "daily-unsplash.yml",
+                ref = "main",
+                inputs = mapOf("target" to target)
+            )
+            if (success) {
+                wallpaperTriggerState.value = "success"
+            } else {
+                wallpaperTriggerState.value = "error"
+            }
+            kotlinx.coroutines.delay(3000)
+            wallpaperTriggerState.value = null
+        }
     }
 
     fun setRootEnabled(enabled: Boolean, context: Context) {
@@ -3989,5 +4092,101 @@ class MainViewModel : ViewModel() {
         }
         addedQSTiles.value =
             tilesString.split(",").map { it.trim() }.filter { it.isNotBlank() }.toSet()
+    }
+
+    // Daily Wallpaper Support
+    val dailyWallpaperInfo = mutableStateOf<com.sameerasw.essentials.domain.model.WallpaperInfo?>(null)
+    val isWallpaperLoading = mutableStateOf(false)
+    private val wallpaperRepository = com.sameerasw.essentials.data.repository.WallpaperRepository()
+
+    fun loadCachedWallpaper() {
+        if (!::settingsRepository.isInitialized) return
+        val id = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_ID) ?: return
+        val url = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL) ?: ""
+        val urlMobile = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL_MOBILE) ?: ""
+        val urlFull = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL) ?: ""
+        val authorName = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_AUTHOR_NAME) ?: ""
+        val authorLink = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_AUTHOR_LINK) ?: ""
+        val photoLink = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_PHOTO_LINK) ?: ""
+        val updatedAt = settingsRepository.getString(SettingsRepository.KEY_DAILY_WALLPAPER_UPDATED_AT) ?: ""
+
+        dailyWallpaperInfo.value = com.sameerasw.essentials.domain.model.WallpaperInfo(
+            id = id,
+            url = url,
+            urlMobile = urlMobile,
+            urlFull = urlFull,
+            authorName = authorName,
+            authorUsername = "",
+            authorLink = authorLink,
+            photoLink = photoLink,
+            updatedAt = updatedAt
+        )
+    }
+
+    fun fetchTodayWallpaper(context: Context) {
+        viewModelScope.launch {
+            isWallpaperLoading.value = true
+            val info = wallpaperRepository.fetchTodayWallpaper()
+            if (info != null) {
+                dailyWallpaperInfo.value = info
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_ID, info.id)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL, info.url)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_LAST_URL_MOBILE, info.urlMobile)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_AUTHOR_NAME, info.authorName)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_AUTHOR_LINK, info.authorLink)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_PHOTO_LINK, info.photoLink)
+                settingsRepository.putString(SettingsRepository.KEY_DAILY_WALLPAPER_UPDATED_AT, info.updatedAt)
+            }
+            isWallpaperLoading.value = false
+        }
+    }
+
+    fun applyWallpaper(context: Context, url: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            isWallpaperLoading.value = true
+            val success = wallpaperRepository.applyWallpaper(context, url)
+            isWallpaperLoading.value = false
+            onResult(success)
+        }
+    }
+
+    val isDailyWallpaperAutoUpdateEnabled = mutableStateOf(false)
+
+    fun setDailyWallpaperAutoUpdate(enabled: Boolean, context: Context) {
+        isDailyWallpaperAutoUpdateEnabled.value = enabled
+        settingsRepository.putBoolean(SettingsRepository.KEY_DAILY_WALLPAPER_AUTO_UPDATE, enabled)
+        if (enabled) {
+            schedulePeriodicWallpaperCheck(context)
+            triggerInstantWallpaperUpdate(context)
+        } else {
+            cancelPeriodicWallpaperCheck(context)
+        }
+    }
+
+    private fun triggerInstantWallpaperUpdate(context: Context) {
+        val data = androidx.work.Data.Builder()
+            .putBoolean("force", true)
+            .build()
+        val workRequest = androidx.work.OneTimeWorkRequestBuilder<com.sameerasw.essentials.services.DailyWallpaperWorker>()
+            .setInputData(data)
+            .build()
+        androidx.work.WorkManager.getInstance(context).enqueue(workRequest)
+    }
+
+    private fun schedulePeriodicWallpaperCheck(context: Context) {
+        val workRequest =
+            androidx.work.PeriodicWorkRequestBuilder<com.sameerasw.essentials.services.DailyWallpaperWorker>(
+                12, java.util.concurrent.TimeUnit.HOURS
+            ).build()
+
+        androidx.work.WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "daily_wallpaper_check_work",
+            androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
+            workRequest
+        )
+    }
+
+    private fun cancelPeriodicWallpaperCheck(context: Context) {
+        androidx.work.WorkManager.getInstance(context).cancelUniqueWork("daily_wallpaper_check_work")
     }
 }
