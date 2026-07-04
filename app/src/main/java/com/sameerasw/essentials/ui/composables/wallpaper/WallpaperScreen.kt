@@ -8,13 +8,17 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -59,8 +63,9 @@ fun WallpaperScreen(
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val bottomBlurHeightPx = with(density) { (220.dp + bottomPadding).toPx() }
 
+    val pullRefreshState = rememberPullToRefreshState()
+
     Box(modifier = Modifier.fillMaxSize()) {
-        // Background Wallpaper Image with Chained Progressive Blur directly applied to it
         if (wallpaperInfo != null) {
             SubcomposeAsyncImage(
                 model = wallpaperInfo!!.urlMobile,
@@ -118,67 +123,118 @@ fun WallpaperScreen(
             }
         }
 
-        AnimatedVisibility(
-            visible = wallpaperInfo != null,
-            enter = fadeIn(animationSpec = tween(400)) + slideInVertically(animationSpec = tween(400)) { it / 2 },
-            exit = fadeOut(animationSpec = tween(400)) + slideOutVertically(animationSpec = tween(400)) { it / 2 },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 96.dp + bottomPadding)
-                .zIndex(2f)
-        ) {
-            Button(
-                onClick = {
-                    HapticUtil.performHeavyHaptic(view)
-                    wallpaperInfo?.urlMobile?.let { url ->
-                        viewModel.applyWallpaper(context, url) { success ->
-                            if (!success) {
-                                Toast.makeText(context, R.string.label_wallpaper_apply_failed, Toast.LENGTH_SHORT).show()
+        PullToRefreshBox(
+            isRefreshing = isLoading,
+            onRefresh = {
+                HapticUtil.performUIHaptic(view)
+                viewModel.fetchTodayWallpaper(context)
+            },
+            state = pullRefreshState,
+            indicator = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = statusBarHeight + 16.dp),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    val scale = if (isLoading) 1f else pullRefreshState.distanceFraction.coerceIn(0f, 1f)
+                    if (scale > 0f) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                            modifier = Modifier
+                                .size(48.dp)
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                    alpha = scale
+                                }
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LoadingIndicator(
+                                    modifier = Modifier.size(36.dp)
+                                )
                             }
                         }
                     }
-                },
+                }
+            },
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 0.dp,
-                    pressedElevation = 0.dp
-                )
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.rounded_open_in_new_24),
-                    contentDescription = null,
-                    modifier = Modifier.size(22.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.label_wallpaper_apply),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                AnimatedVisibility(
+                    visible = wallpaperInfo != null,
+                    enter = fadeIn(animationSpec = tween(400)) + slideInVertically(animationSpec = tween(400)) { it / 2 },
+                    exit = fadeOut(animationSpec = tween(400)) + slideOutVertically(animationSpec = tween(400)) { it / 2 },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 96.dp + bottomPadding)
+                        .zIndex(2f)
+                ) {
+                    Button(
+                        onClick = {
+                            HapticUtil.performHeavyHaptic(view)
+                            wallpaperInfo?.urlMobile?.let { url ->
+                                viewModel.applyWallpaper(context, url) { success ->
+                                    if (!success) {
+                                        Toast.makeText(context, R.string.label_wallpaper_apply_failed, Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 0.dp,
+                            pressedElevation = 0.dp
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.rounded_open_in_new_24),
+                            contentDescription = null,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.label_wallpaper_apply),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+                }
+
+                EssentialsFloatingToolbar(
+                    title = stringResource(R.string.feat_daily_wallpaper_title),
+                    onBackClick = {
+                        HapticUtil.performUIHaptic(view)
+                        onBack()
+                    },
+                    onHelpClick = {
+                        HapticUtil.performUIHaptic(view)
+                        showHelpSheet = true
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .zIndex(1f)
                 )
             }
         }
-
-        EssentialsFloatingToolbar(
-            title = stringResource(R.string.feat_daily_wallpaper_title),
-            onBackClick = {
-                HapticUtil.performUIHaptic(view)
-                onBack()
-            },
-            onHelpClick = {
-                HapticUtil.performUIHaptic(view)
-                showHelpSheet = true
-            },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .zIndex(1f)
-        )
 
         if (showHelpSheet) {
             WallpaperHelpBottomSheet(
@@ -244,9 +300,11 @@ fun WallpaperHelpBottomSheet(
             )
 
             if (wallpaperInfo != null) {
-                RoundedCardContainer{
+                RoundedCardContainer {
                     Column(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceBright, shape = MaterialTheme.shapes.extraSmall).padding(16.dp),
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceBright, shape = MaterialTheme.shapes.extraSmall)
+                            .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
@@ -285,8 +343,14 @@ fun WallpaperHelpBottomSheet(
                             }
                         }
                     }
+                }
+            }
+
+            RoundedCardContainer {
                 Column(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceBright, shape = MaterialTheme.shapes.extraSmall).padding(16.dp),
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceBright, shape = MaterialTheme.shapes.extraSmall)
+                        .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
@@ -299,7 +363,6 @@ fun WallpaperHelpBottomSheet(
                     ) {
                         Text(text = "View Sameera's Collection")
                     }
-                }
                 }
             }
         }
