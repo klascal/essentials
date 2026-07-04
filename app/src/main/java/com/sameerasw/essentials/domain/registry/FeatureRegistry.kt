@@ -8,10 +8,33 @@ import com.sameerasw.essentials.domain.model.Feature
 import com.sameerasw.essentials.domain.model.SearchSetting
 import com.sameerasw.essentials.ui.activities.WatermarkActivity
 import com.sameerasw.essentials.ui.activities.PixelSearchbarSettingsActivity
+import com.sameerasw.essentials.utils.DeviceUtils
 import com.sameerasw.essentials.utils.ShellUtils
 import com.sameerasw.essentials.viewmodels.MainViewModel
 
 object FeatureRegistry {
+    fun getFilteredFeatures(context: Context, includeUnsupported: Boolean): List<Feature> {
+        val featureMap = ALL_FEATURES.associateBy { it.id }
+        val supportCache = mutableMapOf<String, Boolean>()
+
+        fun isVisible(feature: Feature): Boolean {
+            supportCache[feature.id]?.let { return it }
+
+            val supported = includeUnsupported || feature.isDeviceSupported(context)
+            val visible = supported && (feature.parentFeatureId?.let { parentId ->
+                featureMap[parentId]?.let { parent -> isVisible(parent) } ?: true
+            } ?: true)
+
+            supportCache[feature.id] = visible
+            return visible
+        }
+
+        return ALL_FEATURES.filter { isVisible(it) }
+    }
+
+    fun getUnsupportedFeatures(context: Context): List<Feature> =
+        ALL_FEATURES.filter { !it.isDeviceSupported(context) }
+
     val ALL_FEATURES = listOf(
         // Sound Group Children
         object : Feature(
@@ -239,6 +262,7 @@ object FeatureRegistry {
         ) {
             override fun isEnabled(viewModel: MainViewModel) = true
             override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}
+            override fun isDeviceSupported(context: Context) = DeviceUtils.isGoogleDevice()
         },
         object : Feature(
             id = "Watch",
@@ -298,6 +322,7 @@ object FeatureRegistry {
             override fun onClick(context: Context, viewModel: MainViewModel) {
                 context.startActivity(Intent(context, PixelSearchbarSettingsActivity::class.java))
             }
+            override fun isDeviceSupported(context: Context) = DeviceUtils.isGoogleDevice()
         },
 
         object : Feature(
@@ -933,6 +958,7 @@ object FeatureRegistry {
 
             override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) =
                 viewModel.setPocketModeEnabled(enabled)
+            override fun isDeviceSupported(context: Context) = !DeviceUtils.isGoogleDevice()
         },
         object : Feature(
             id = "Location reached",
@@ -1311,6 +1337,7 @@ object FeatureRegistry {
         ) {
             override fun isEnabled(viewModel: MainViewModel) = false
             override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}
+            override fun isDeviceSupported(context: Context) = DeviceUtils.isGoogleDevice()
         }
     )
 }

@@ -487,8 +487,10 @@ class FeatureSettingsActivity : AppCompatActivity() {
                                 )
                             }
 
-                            val children =
-                                FeatureRegistry.ALL_FEATURES.filter { it.parentFeatureId == featureId }
+                            val children = FeatureRegistry.getFilteredFeatures(
+                                context,
+                                viewModel.isEnableUnsupportedFeatures.value
+                            ).filter { it.parentFeatureId == featureId }
                             if (children.isNotEmpty()) {
                                 RoundedCardContainer(
                                     modifier = Modifier

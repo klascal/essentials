@@ -866,7 +866,10 @@ fun SetupFeatures(
     var isRefreshing by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    val allFeatures = FeatureRegistry.ALL_FEATURES
+    val allFeatures = FeatureRegistry.getFilteredFeatures(
+        context,
+        viewModel.isEnableUnsupportedFeatures.value
+    )
 
     LaunchedEffect(searchRequested) {
         if (searchRequested) {

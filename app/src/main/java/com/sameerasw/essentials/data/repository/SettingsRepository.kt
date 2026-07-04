@@ -153,6 +153,7 @@ class SettingsRepository(private val context: Context) {
         const val KEY_DEFAULT_TAB = "default_tab"
         const val KEY_USE_ROOT = "use_root"
         const val KEY_PITCH_BLACK_THEME_ENABLED = "pitch_black_theme_enabled"
+        const val KEY_ENABLE_UNSUPPORTED_FEATURES = "enable_unsupported_features"
 
         const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
         const val KEY_TRACKED_REPOS = "tracked_repos"
@@ -1105,6 +1106,12 @@ class SettingsRepository(private val context: Context) {
 
     fun setBatteryNotificationEnabled(enabled: Boolean) =
         putBoolean(KEY_BATTERY_NOTIFICATION_ENABLED, enabled)
+
+    fun isEnableUnsupportedFeatures(): Boolean =
+        getBoolean(KEY_ENABLE_UNSUPPORTED_FEATURES, false)
+
+    fun setEnableUnsupportedFeatures(enabled: Boolean) =
+        putBoolean(KEY_ENABLE_UNSUPPORTED_FEATURES, enabled)
 
     // Live Wallpaper Helpers
     private val liveWallpaperPrefs: SharedPreferences by lazy {

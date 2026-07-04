@@ -2,10 +2,14 @@ package com.sameerasw.essentials.services.tiles
 
 import android.graphics.drawable.Icon
 import android.service.quicksettings.Tile
+import androidx.core.content.edit
 import com.sameerasw.essentials.R
+import com.sameerasw.essentials.utils.DeviceUtils
 import com.sameerasw.essentials.utils.PermissionUtils
 
 class PocketModeTileService : BaseTileService() {
+
+    override fun isDeviceSupported(): Boolean = !DeviceUtils.isGoogleDevice()
 
     override fun getTileLabel(): String = getString(R.string.feat_pocket_mode_title)
 
@@ -29,6 +33,6 @@ class PocketModeTileService : BaseTileService() {
     override fun onTileClick() {
         val prefs = getSharedPreferences("essentials_prefs", MODE_PRIVATE)
         val isEnabled = prefs.getBoolean("pocket_mode_enabled", false)
-        prefs.edit().putBoolean("pocket_mode_enabled", !isEnabled).apply()
+        prefs.edit { putBoolean("pocket_mode_enabled", !isEnabled) }
     }
 }

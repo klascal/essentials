@@ -253,6 +253,7 @@ class MainViewModel : ViewModel() {
     val hasPendingUpdates = mutableStateOf(false)
 
     val isPitchBlackThemeEnabled = mutableStateOf(false)
+    val isEnableUnsupportedFeatures = mutableStateOf(false)
     val isBlurEnabled = mutableStateOf(true)
     val isBlurSettingEnabled = mutableStateOf(true)
     val isSwipeTabsEnabled = mutableStateOf(true)
@@ -465,6 +466,13 @@ class MainViewModel : ViewModel() {
 
                     SettingsRepository.KEY_PITCH_BLACK_THEME_ENABLED -> isPitchBlackThemeEnabled.value =
                         settingsRepository.getBoolean(key)
+
+                    SettingsRepository.KEY_ENABLE_UNSUPPORTED_FEATURES -> {
+                        isEnableUnsupportedFeatures.value = settingsRepository.isEnableUnsupportedFeatures()
+                        if (searchQuery.value.isNotBlank()) {
+                            appContext?.let { onSearchQueryChanged(searchQuery.value, it) }
+                        }
+                    }
 
                     SettingsRepository.KEY_KEYBOARD_HEIGHT -> keyboardHeight.floatValue =
                         settingsRepository.getFloat(key, 54f)
@@ -1302,6 +1310,7 @@ class MainViewModel : ViewModel() {
             settingsRepository.getBoolean(SettingsRepository.KEY_FLASHLIGHT_POCKET_TURN_OFF_ENABLED)
         isPitchBlackThemeEnabled.value =
             settingsRepository.getBoolean(SettingsRepository.KEY_PITCH_BLACK_THEME_ENABLED)
+        isEnableUnsupportedFeatures.value = settingsRepository.isEnableUnsupportedFeatures()
 
         keyboardHeight.floatValue =
             settingsRepository.getFloat(SettingsRepository.KEY_KEYBOARD_HEIGHT, 54f)
@@ -1506,6 +1515,14 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun setEnableUnsupportedFeatures(enabled: Boolean, context: Context) {
+        isEnableUnsupportedFeatures.value = enabled
+        settingsRepository.setEnableUnsupportedFeatures(enabled)
+        if (searchQuery.value.isNotBlank()) {
+            onSearchQueryChanged(searchQuery.value, context)
+        }
+    }
+
     fun onSearchQueryChanged(query: String, context: Context) {
         searchQuery.value = query
         searchJob?.cancel()
@@ -1519,7 +1536,11 @@ class MainViewModel : ViewModel() {
         isSearching.value = true
         searchJob = viewModelScope.launch(Dispatchers.Default) {
             delay(300)
-            val results = SearchRegistry.search(context, query)
+            val results = SearchRegistry.search(
+                context,
+                query,
+                isEnableUnsupportedFeatures.value
+            )
             withContext(Dispatchers.Main) {
                 searchResults.value = results
                 isSearching.value = false

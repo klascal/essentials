@@ -74,6 +74,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.app.ActivityCompat
 import com.sameerasw.essentials.domain.DIYTabs
+import com.sameerasw.essentials.domain.registry.FeatureRegistry
 import com.sameerasw.essentials.domain.registry.PermissionRegistry
 import com.sameerasw.essentials.ui.components.EssentialsFloatingToolbar
 import com.sameerasw.essentials.ui.components.MadebySameeraswCard
@@ -86,6 +87,7 @@ import com.sameerasw.essentials.ui.components.pickers.CrashReportingPicker
 import com.sameerasw.essentials.ui.components.pickers.DefaultTabPicker
 import com.sameerasw.essentials.ui.components.pickers.LanguagePicker
 import com.sameerasw.essentials.ui.components.sheets.InstructionsBottomSheet
+import com.sameerasw.essentials.ui.components.sheets.UnsupportedFeaturesConfirmationSheet
 import com.sameerasw.essentials.ui.components.sheets.UpdateBottomSheet
 import com.sameerasw.essentials.ui.modifiers.BlurDirection
 import com.sameerasw.essentials.ui.modifiers.progressiveBlur
@@ -254,6 +256,7 @@ fun SettingsContent(
     val isDeveloperModeEnabled by viewModel.isDeveloperModeEnabled
     var showInstructionsSheet by remember { mutableStateOf(false) }
     var showShizukuHelpBottomSheet by remember { mutableStateOf(false) }
+    var showUnsupportedFeaturesSheet by remember { mutableStateOf(false) }
 
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
@@ -304,6 +307,17 @@ fun SettingsContent(
     if (showInstructionsSheet) {
         InstructionsBottomSheet(
             onDismissRequest = { showInstructionsSheet = false }
+        )
+    }
+
+    if (showUnsupportedFeaturesSheet) {
+        UnsupportedFeaturesConfirmationSheet(
+            onDismissRequest = { showUnsupportedFeaturesSheet = false },
+            onConfirm = {
+                showUnsupportedFeaturesSheet = false
+                viewModel.setEnableUnsupportedFeatures(true, context)
+            },
+            featureTitleResIds = FeatureRegistry.getUnsupportedFeatures(context).map { it.title }
         )
     }
 
@@ -420,6 +434,7 @@ fun SettingsContent(
                 enabled = !isBlurProblematic
             )
 
+
             CrashReportingPicker(
                 selectedMode = sentryMode,
                 onModeSelected = { viewModel.setSentryReportMode(it, context) }
@@ -508,6 +523,21 @@ fun SettingsContent(
                 description = stringResource(R.string.setting_use_usage_access_desc),
                 isChecked = viewModel.isUseUsageAccess.value,
                 onCheckedChange = { viewModel.setUseUsageAccess(it, context) }
+            )
+
+
+            IconToggleItem(
+                iconRes = R.drawable.rounded_release_alert_24,
+                title = stringResource(R.string.setting_enable_unsupported_features_title),
+                description = stringResource(R.string.setting_enable_unsupported_features_desc),
+                isChecked = viewModel.isEnableUnsupportedFeatures.value,
+                onCheckedChange = { enabled ->
+                    if (enabled) {
+                        showUnsupportedFeaturesSheet = true
+                    } else {
+                        viewModel.setEnableUnsupportedFeatures(false, context)
+                    }
+                }
             )
         }
 
