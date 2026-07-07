@@ -104,6 +104,8 @@
     <string name="flashlight_always_off_desc">Even while display is on</string>
     <string name="flashlight_pocket_title">Pocket detection</string>
     <string name="flashlight_pocket_desc">Turn off flashlight when phone is in your pocket</string>
+    <string name="flashlight_overheat_title">Overheating prevention</string>
+    <string name="flashlight_overheat_desc">Lower brightness on longer period of use</string>
     <string name="content_desc_settings">Settings</string>
 
     <!-- Caffeinate / Permissions -->

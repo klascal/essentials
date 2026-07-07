@@ -119,6 +119,7 @@ class MainViewModel : ViewModel() {
     val flashlightPulseMaxIntensity = mutableFloatStateOf(0.5f)
     val isFlashlightPulseDisableOnDnd = mutableStateOf(true)
     val isFlashlightPocketTurnOffEnabled = mutableStateOf(false)
+    val isFlashlightOverheatEnabled = mutableStateOf(true)
     val isLocationPermissionGranted = mutableStateOf(false)
     val isBackgroundLocationPermissionGranted = mutableStateOf(false)
     val isFullScreenIntentPermissionGranted = mutableStateOf(false)
@@ -652,6 +653,10 @@ class MainViewModel : ViewModel() {
 
                     SettingsRepository.KEY_FLASHLIGHT_POCKET_TURN_OFF_ENABLED -> {
                         isFlashlightPocketTurnOffEnabled.value = settingsRepository.getBoolean(key)
+                    }
+
+                    SettingsRepository.KEY_FLASHLIGHT_OVERHEAT_PREVENTION_ENABLED -> {
+                        isFlashlightOverheatEnabled.value = settingsRepository.getBoolean(key, true)
                     }
 
                     SettingsRepository.KEY_CIRCLE_TO_SEARCH_GESTURE_ENABLED -> {
@@ -1316,6 +1321,8 @@ class MainViewModel : ViewModel() {
         )
         isFlashlightPocketTurnOffEnabled.value =
             settingsRepository.getBoolean(SettingsRepository.KEY_FLASHLIGHT_POCKET_TURN_OFF_ENABLED)
+        isFlashlightOverheatEnabled.value =
+            settingsRepository.getBoolean(SettingsRepository.KEY_FLASHLIGHT_OVERHEAT_PREVENTION_ENABLED, true)
         isPitchBlackThemeEnabled.value =
             settingsRepository.getBoolean(SettingsRepository.KEY_PITCH_BLACK_THEME_ENABLED)
         isEnableUnsupportedFeatures.value = settingsRepository.isEnableUnsupportedFeatures()
@@ -3835,6 +3842,14 @@ class MainViewModel : ViewModel() {
         isFlashlightPocketTurnOffEnabled.value = enabled
         settingsRepository.putBoolean(
             SettingsRepository.KEY_FLASHLIGHT_POCKET_TURN_OFF_ENABLED,
+            enabled
+        )
+    }
+
+    fun setFlashlightOverheatEnabled(enabled: Boolean, context: Context) {
+        isFlashlightOverheatEnabled.value = enabled
+        settingsRepository.putBoolean(
+            SettingsRepository.KEY_FLASHLIGHT_OVERHEAT_PREVENTION_ENABLED,
             enabled
         )
     }
