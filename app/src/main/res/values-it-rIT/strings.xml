@@ -103,6 +103,8 @@
     <string name="flashlight_always_off_desc">Anche mentre lo schermo è acceso</string>
     <string name="flashlight_pocket_title">Pocket detection</string>
     <string name="flashlight_pocket_desc">Turn off flashlight when phone is in your pocket</string>
+    <string name="flashlight_overheat_title">Overheating prevention</string>
+    <string name="flashlight_overheat_desc">Lower brightness on longer period of use</string>
     <string name="content_desc_settings">Impostazioni</string>
     <!-- Caffeinate / Permissions -->
     <string name="permission_show_notification_title">Mostra notifiche</string>
@@ -651,6 +653,7 @@
     <string name="perm_action_how_to">Come concedere</string>
     <string name="perm_action_granted">Concesso</string>
     <string name="perm_action_grant_shizuku">Concedi tramite Shizuku</string>
+    <string name="perm_action_grant_root">Grant using Root</string>
     <string name="perm_write_secure_instructions">Questo permesso può essere concesso tramite PC utilizzando ADB. Copia il comando ADB ed eseguilo nella shell.\n\nIn alternativa, puoi concederlo facilmente tramite Shizuku usando il pulsante qui sotto.\n\nQuesto permesso deve essere concesso una sola volta.</string>
     <string name="perm_battery_optimization_title">Ottimizzazione della batteria</string>
     <string name="perm_battery_optimization_desc">Evita la chiusura del servizio da parte del sistema per risparmio energetico.</string>
@@ -1400,6 +1403,7 @@
     <string name="refresh_rate_system_default">Sistema</string>
     <string name="refresh_rate_reset_desc">Rimuovi l\'override personalizzato e torna al comportamento di aggiornamento predefinito di sistema</string>
     <string name="msg_refresh_rate_permission_required">È necessaria l\'autorizzazione di Shizuku per regolare la frequenza di aggiornamento</string>
+    <string name="msg_refresh_rate_root_permission_required">Root permission required to adjust refresh rate</string>
     <string name="search_refresh_rate_mode_title">Modalità frequenza di aggiornamento</string>
     <string name="search_refresh_rate_mode_desc">Passa dal controllo della frequenza di aggiornamento fissa a quella variabile</string>
     <string name="search_refresh_rate_fixed_title">Frequenza di aggiornamento fissa</string>
