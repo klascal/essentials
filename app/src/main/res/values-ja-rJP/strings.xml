@@ -103,6 +103,8 @@
     <string name="flashlight_always_off_desc">画面がオンのときも</string>
     <string name="flashlight_pocket_title">ポケット検出</string>
     <string name="flashlight_pocket_desc">デバイスがポケットに入るとフラッシュライトをオフにする</string>
+    <string name="flashlight_overheat_title">Overheating prevention</string>
+    <string name="flashlight_overheat_desc">Lower brightness on longer period of use</string>
     <string name="content_desc_settings">設定</string>
     <!-- Caffeinate / Permissions -->
     <string name="permission_show_notification_title">通知を表示</string>
@@ -651,6 +653,7 @@
     <string name="perm_action_how_to">付与の方法</string>
     <string name="perm_action_granted">付与済み</string>
     <string name="perm_action_grant_shizuku">Shizukuを使って付与</string>
+    <string name="perm_action_grant_root">Grant using Root</string>
     <string name="perm_write_secure_instructions">この権限は、PCからADBを使用して付与することができます。ADBコマンドをコピーして、シェルで実行してください。\n\nまたは、下のボタンから「Shizuku」を使って簡単に付与することもできます。\n\nこの権限の付与は一回だけで済みます。</string>
     <string name="perm_battery_optimization_title">バッテリーの最適化を無視</string>
     <string name="perm_battery_optimization_desc">バッテリー節約のためにシステムがアプリを強制終了しないようにしてください。</string>
@@ -1400,6 +1403,7 @@
     <string name="refresh_rate_system_default">システム</string>
     <string name="refresh_rate_reset_desc">カスタムオーバーライドを削除し、システムのデフォルトの更新動作に戻す</string>
     <string name="msg_refresh_rate_permission_required">リフレッシュレート調整にはShizuku権限が必要です</string>
+    <string name="msg_refresh_rate_root_permission_required">Root permission required to adjust refresh rate</string>
     <string name="search_refresh_rate_mode_title">リフレッシュレートモード</string>
     <string name="search_refresh_rate_mode_desc">固定リフレッシュレート制御と可変リフレッシュレート制御を切り替える</string>
     <string name="search_refresh_rate_fixed_title">固定リフレッシュレート</string>
