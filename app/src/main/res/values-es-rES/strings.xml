@@ -472,7 +472,7 @@ Sin embargo, sí te permite reanudarla desde la lista de aplicaciones del lanzad
     <string name="feat_watermark_title">Marca de agua</string>
     <string name="feat_watermark_desc">Añadir datos EXIF ​​y logotipos a las fotos</string>
     <string name="feat_daily_wallpaper_title">Fondo de pantalla</string>
-    <string name="feat_daily_wallpaper_desc">Daily curated handpicked wallpaper</string>
+    <string name="feat_daily_wallpaper_desc">Fondos de pantalla seleccionados diariamente y en vivo</string>
     <string name="label_wallpaper_apply">Aplicar fondo de pantalla</string>
     <string name="label_wallpaper_by">Foto de</string>
     <string name="label_wallpaper_applied">Fondo de pantalla aplicado correctamente</string>
@@ -542,7 +542,7 @@ Sin embargo, sí te permite reanudarla desde la lista de aplicaciones del lanzad
     <string name="search_haptic_title">Vibración háptica del widget</string>
     <string name="search_haptic_desc">Elige la respuesta háptica para los toques en el widget</string>
     <string name="search_smart_wifi_title">Wifi inteligente</string>
-    <string name="search_smart_wifi_desc">Ocultar los datos móviles cuando haya Wi‑Fi conectado</string>
+    <string name="search_smart_wifi_desc">Ocultar los datos móviles cuando haya Wifi conectado</string>
     <string name="search_smart_data_title">Datos inteligentes</string>
     <string name="search_smart_data_desc">Ocultar los datos móviles en ciertos modos</string>
     <string name="search_reset_icons_title">Restablecer todos los iconos</string>
@@ -811,7 +811,7 @@ Sin embargo, sí te permite reanudarla desde la lista de aplicaciones del lanzad
     <string name="about_desc_call_vibrations">Añade retroalimentación háptica a tus llamadas.\n\nVibra cuando una llamada se conecta, se desconecta o se acepta, dándote una confirmación táctil sin necesidad de mirar la pantalla.</string>
     <string name="about_desc_sound_mode_tile">Cambia rápidamente entre los modos Sonido, Vibración y Silencio.\n\nUna práctica tarjeta para cambiar el modo del timbre sin usar los botones de volumen ni los ajustes. Puedes reordenar los modos o desactivar los que no necesites para personalizar el comportamiento del ciclo al alternar.</string>
     <string name="about_desc_ui_blur">Activa/desactiva fácilmente el efecto de desenfoque a nivel del sistema en todo el sistema operativo.</string>
-    <string name="about_desc_bubbles">Activa/desactiva las burbujas flotantes de notificaciones.\n\nActiva o desactiva rápidamente el ajuste del sistema para las burbujas de conversación.</string>
+    <string name="about_desc_bubbles">Activar o desactivar las burbujas flotantes de notificaciones.\n\nActiva o desactiva rápidamente el ajuste del sistema para las burbujas de conversación.</string>
     <string name="about_desc_sensitive_content">Oculta el contenido sensible en la pantalla de bloqueo\n\nActiva o desactiva si el contenido de las notificaciones se muestra u oculta cuando el dispositivo está bloqueado.</string>
     <string name="about_desc_tap_to_wake">Activar/desactivar la función de tocar para activar.\n\nPermite activar o desactivar la opción de encender la pantalla con un toque.</string>
     <string name="about_desc_aod">Activar/desactivar Pantalla siempre activa.\n\nActiva o desactiva rápidamente la Pantalla siempre activa para ver información de un vistazo.</string>
@@ -1248,7 +1248,7 @@ Cuando llegue un mensaje o alerta de una aplicación seleccionada, la Pantalla s
     <!-- GitHub Auth -->
     <string name="auth_copy_code">Copiar código</string>
     <string name="auth_open_login_page">Abrir página de inicio de sesión</string>
-    <string name="auth_sign_in_rationale">Inicia sesión para ampliar los límites de llamadas API</string>
+    <string name="auth_sign_in_rationale">Inicia sesión para ampliar los límites de llamadas a la API</string>
     <string name="auth_waiting_for_authorization">Esperando autorización...</string>
     <string name="action_sign_in_github">Iniciar sesión con GitHub</string>
     <string name="action_sign_out">Cerrar sesión</string>
@@ -1484,8 +1484,8 @@ Cuando llegue un mensaje o alerta de una aplicación seleccionada, la Pantalla s
     <string name="shut_up_shortcut_created">Acceso directo creado para %s</string>
     <string name="feat_disable_rotation_suggestion_title">Desactivar sugerencia de rotación</string>
     <string name="feat_disable_rotation_suggestion_desc">No mostrar el botón de rotación cuando la rotación automática esté desactivada</string>
-    <string name="feat_pixel_searchbar_title">Pixel searchbar</string>
-    <string name="feat_pixel_searchbar_desc">Set Essentials as the default search provider for the home screen search bar in Pixel Launcher.</string>
+    <string name="feat_pixel_searchbar_title">Reemplazar la barra de búsqueda</string>
+    <string name="feat_pixel_searchbar_desc">Reemplazar la barra de búsqueda predeterminada de Pixel Launcher.</string>
     <string name="shut_up_toast_active">La aplicación fue silenciada</string>
     <string name="shut_up_toast_restored">Las funciones de Cállate han regresado</string>
     <string name="shut_up_auto_archive_notif_title">Congelación automática</string>
@@ -1541,7 +1541,7 @@ Cuando llegue un mensaje o alerta de una aplicación seleccionada, la Pantalla s
     <string name="perm_external_control_label">controlar las funciones de Essentials</string>
     <string name="perm_external_control_desc">leer, actualizar y controlar las funciones y ajustes de Essentials</string>
     <string name="pixel_searchbar_settings_title">Personalización de la barra de búsqueda de Pixel</string>
-    <string name="pixel_searchbar_style_empty">Empty (Default)</string>
+    <string name="pixel_searchbar_style_empty">Vacio</string>
     <string name="pixel_searchbar_style_date">Fecha</string>
     <string name="pixel_searchbar_background_pill_title">Pastilla de fondo</string>
     <string name="pixel_searchbar_background_pill_desc">Mostrar la fecha dentro de un contenedor</string>
