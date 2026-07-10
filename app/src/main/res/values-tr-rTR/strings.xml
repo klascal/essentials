@@ -103,8 +103,8 @@
     <string name="flashlight_always_off_desc">Ekran açıkken bile</string>
     <string name="flashlight_pocket_title">Cep tespiti</string>
     <string name="flashlight_pocket_desc">Telefon cebinizdeyken el fenerini kapatın</string>
-    <string name="flashlight_overheat_title">Overheating prevention</string>
-    <string name="flashlight_overheat_desc">Lower brightness on longer period of use</string>
+    <string name="flashlight_overheat_title">Aşırı ısınma önleme</string>
+    <string name="flashlight_overheat_desc">Uzun süreli kullanımda parlaklığı düşürün</string>
     <string name="content_desc_settings">Ayarlar</string>
     <!-- Caffeinate / Permissions -->
     <string name="permission_show_notification_title">Bildirimi Göster</string>
@@ -653,7 +653,7 @@
     <string name="perm_action_how_to">Nasıl verilir</string>
     <string name="perm_action_granted">Verildi</string>
     <string name="perm_action_grant_shizuku">Shizuku kullanarak izin ver</string>
-    <string name="perm_action_grant_root">Grant using Root</string>
+    <string name="perm_action_grant_root">Root kullanarak izin ver</string>
     <string name="perm_write_secure_instructions">Bu izin, ADB kullanarak bir bilgisayar üzerinden verilebilir. ADB komutunu kopyalayın ve kabukta çalıştırın.\n\nYa da aşağıdaki butonu kullanarak Shizuku kullanarak kolayca izin verebilirsiniz.\n\nBu iznin yalnızca bir kez verilmesi yeterlidir.</string>
     <string name="perm_battery_optimization_title">Pil Optimizasyonu</string>
     <string name="perm_battery_optimization_desc">Güç tasarrufu sağlamak için hizmetin sistem tarafından sonlandırılmadığından emin olun.</string>
@@ -1312,9 +1312,9 @@
     <string name="feat_watch_wireless_debugging_title">Kablosuz Hata Ayıklama</string>
     <string name="feat_watch_wireless_debugging_desc">Uzaktan etkinleştirin</string>
     <string name="feat_sync_sound_mode_title">Ses modu senkronizasyonu</string>
-    <string name="feat_sync_sound_mode_desc">Automatically sync with watch</string>
-    <string name="perm_watch_write_secure_title">Watch Secure Settings</string>
-    <string name="perm_watch_write_secure_desc">Requires secure settings write permission on your Watch. Grant it using the ADB command below.</string>
+    <string name="feat_sync_sound_mode_desc">Saatle otomatik olarak senkronize et</string>
+    <string name="perm_watch_write_secure_title">Saat Güvenli Ayarları</string>
+    <string name="perm_watch_write_secure_desc">Saatinizde güvenli ayarlara yazma izni gereklidir. Aşağıdaki ADB komutunu kullanarak bu izni verin.</string>
     <string name="cat_interaction">Etkileşim</string>
     <string name="cat_interface">Arayüz</string>
     <string name="cat_display">Görüntülemek</string>
