@@ -55,6 +55,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -331,28 +332,6 @@ private fun CompassScreen(
             drawRect(Color.Black)
         }
 
-        // Map Button at top center
-        androidx.compose.material3.OutlinedIconButton(
-            onClick = {
-                HapticUtil.performUIHaptic(view)
-                val intent = Intent(context, com.sameerasw.essentials.FeatureSettingsActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    putExtra("feature", "Location reached")
-                }
-                context.startActivity(intent)
-            },
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 80.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, primaryColor)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.rounded_map_24),
-                contentDescription = "Map Settings",
-                tint = primaryColor
-            )
-        }
-
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
@@ -580,6 +559,29 @@ private fun CompassScreen(
                     }
                 }
             }
+        }
+
+        // Map Button
+        androidx.compose.material3.OutlinedIconButton(
+            onClick = {
+                HapticUtil.performUIHaptic(view)
+                val intent = Intent(context, com.sameerasw.essentials.FeatureSettingsActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    putExtra("feature", "Location reached")
+                }
+                context.startActivity(intent)
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+                .zIndex(1f),
+            border = androidx.compose.foundation.BorderStroke(1.dp, primaryColor)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.rounded_map_24),
+                contentDescription = "Map Settings",
+                tint = primaryColor
+            )
         }
     }
 }
