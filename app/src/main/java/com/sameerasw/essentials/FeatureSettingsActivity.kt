@@ -71,7 +71,9 @@ import com.sameerasw.essentials.ui.composables.configs.LocationReachedSettingsUI
 import com.sameerasw.essentials.ui.composables.configs.LockScreenClockSettingsUI
 import com.sameerasw.essentials.ui.composables.configs.MapsPowerSavingSettingsUI
 import com.sameerasw.essentials.ui.composables.configs.NotificationLightingSettingsUI
+import com.sameerasw.essentials.ui.composables.configs.PowerAndBatterySettingsUI
 import com.sameerasw.essentials.ui.composables.configs.OtherCustomizationsSettingsUI
+
 import com.sameerasw.essentials.ui.composables.configs.PocketModeSettingsUI
 import com.sameerasw.essentials.ui.composables.configs.QuickSettingsTilesSettingsUI
 import com.sameerasw.essentials.ui.composables.configs.RefreshRateSettingsUI
@@ -329,6 +331,7 @@ class FeatureSettingsActivity : AppCompatActivity() {
                             )
 
                             "Shut-Up!" -> !isWriteSecureSettingsEnabled || !viewModel.isUsageStatsPermissionGranted.value
+                            "Power and Battery" -> !isWriteSecureSettingsEnabled
                             else -> false
                         }
                         if (hasMissingPermissions) {
@@ -550,6 +553,7 @@ class FeatureSettingsActivity : AppCompatActivity() {
                                                     context
                                                 )
                                                 "Shut-Up!" -> !isWriteSecureSettingsEnabled || !viewModel.isUsageStatsPermissionGranted.value
+                                                "Power and Battery" -> !isWriteSecureSettingsEnabled
                                                 else -> false
                                             }
 
@@ -865,6 +869,14 @@ class FeatureSettingsActivity : AppCompatActivity() {
                                             viewModel = viewModel,
                                             modifier = Modifier.padding(top = 16.dp),
                                             highlightKey = highlightSetting
+                                        )
+                                    }
+
+                                    "Power and Battery" -> {
+                                        PowerAndBatterySettingsUI(
+                                            viewModel = viewModel,
+                                            modifier = Modifier.padding(top = 16.dp),
+                                            highlightSetting = highlightSetting
                                         )
                                     }
                                 }

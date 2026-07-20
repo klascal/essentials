@@ -320,6 +320,10 @@ class MainViewModel : ViewModel() {
     val isAprilFoolsSheetVisible = mutableStateOf(false)
     val isAprilFoolsShown = mutableStateOf(false)
 
+    // Battery Saver Constants
+    val batterySaverConstants = mutableStateOf<Map<String, String>>(emptyMap())
+
+
     private var lastUpdateCheckTime: Long = 0
     lateinit var settingsRepository: SettingsRepository
     private lateinit var updateRepository: UpdateRepository
@@ -376,6 +380,10 @@ class MainViewModel : ViewModel() {
                     Settings.System.getUriFor("peak_refresh_rate"),
                     Settings.System.getUriFor("min_refresh_rate") -> {
                         appContext?.let { syncRefreshRateState(it) }
+                    }
+
+                    Settings.Global.getUriFor("battery_saver_constants") -> {
+                        appContext?.let { loadBatterySaverConstants(it) }
                     }
                 }
             }
@@ -1085,6 +1093,18 @@ class MainViewModel : ViewModel() {
             // This might fail on Android 14+ for some system keys
             e.printStackTrace()
         }
+
+        try {
+            context.contentResolver.registerContentObserver(
+                Settings.Global.getUriFor("battery_saver_constants"),
+                false,
+                contentObserver
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        loadBatterySaverConstants(context)
 
         isPowerSaveModeEnabled.value = DeviceUtils.isPowerSaveMode(context)
         updateBlurState(context)
@@ -4317,6 +4337,51 @@ class MainViewModel : ViewModel() {
         } else {
             dailyWallpaperAutoUpdateTime.value = null
             settingsRepository.remove(SettingsRepository.KEY_DAILY_WALLPAPER_AUTO_UPDATE_TIME)
+        }
+    }
+
+    fun loadBatterySaverConstants(context: Context) {
+        val constantsStr = Settings.Global.getString(context.contentResolver, "battery_saver_constants") ?: ""
+        val map = mutableMapOf<String, String>()
+        if (constantsStr.isNotEmpty()) {
+            constantsStr.split(",").forEach { pair ->
+                val parts = pair.split("=", limit = 2)
+                if (parts.size == 2) {
+                    map[parts[0].trim()] = parts[1].trim()
+                }
+            }
+        }
+        batterySaverConstants.value = map
+    }
+
+    fun updateBatterySaverConstant(context: Context, key: String, value: String) {
+        val currentMap = batterySaverConstants.value.toMutableMap()
+        currentMap[key] = value
+        saveBatterySaverConstants(context, currentMap)
+    }
+
+    fun removeBatterySaverConstant(context: Context, key: String) {
+        val currentMap = batterySaverConstants.value.toMutableMap()
+        currentMap.remove(key)
+        saveBatterySaverConstants(context, currentMap)
+    }
+
+    fun resetBatterySaverConstants(context: Context) {
+        try {
+            Settings.Global.putString(context.contentResolver, "battery_saver_constants", null)
+            batterySaverConstants.value = emptyMap()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun saveBatterySaverConstants(context: Context, map: Map<String, String>) {
+        val constantsStr = map.map { "${it.key}=${it.value}" }.joinToString(",")
+        try {
+            Settings.Global.putString(context.contentResolver, "battery_saver_constants", constantsStr)
+            batterySaverConstants.value = map
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

@@ -532,6 +532,28 @@ object FeatureRegistry {
         },
 
         object : Feature(
+            id = "Power and Battery",
+            title = R.string.feat_power_battery_title,
+            iconRes = R.drawable.rounded_battery_charging_60_24,
+            category = R.string.cat_interaction,
+            description = R.string.feat_power_battery_desc,
+            aboutDescription = R.string.about_desc_power_battery,
+            parentFeatureId = "Input",
+            showToggle = false,
+            hasMoreSettings = true,
+            permissionKeys = listOf("WRITE_SECURE_SETTINGS")
+        ) {
+            override fun isEnabled(viewModel: MainViewModel) = true
+            override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}
+            override fun onClick(context: Context, viewModel: MainViewModel) {
+                val intent = Intent(context, com.sameerasw.essentials.FeatureSettingsActivity::class.java).apply {
+                    putExtra("feature", "Power and Battery")
+                }
+                context.startActivity(intent)
+            }
+        },
+
+        object : Feature(
             id = "Flashlight",
             title = R.string.feat_flashlight_title,
             iconRes = R.drawable.rounded_flashlight_on_24,

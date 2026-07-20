@@ -97,4 +97,7 @@ fun initPermissionRegistry() {
     PermissionRegistry.register("WRITE_SECURE_SETTINGS", R.string.feat_shut_up_title)
     PermissionRegistry.register("WRITE_SETTINGS", R.string.feat_shut_up_title)
     PermissionRegistry.register("USAGE_STATS", R.string.feat_shut_up_title)
+
+    // Power and Battery feature
+    PermissionRegistry.register("WRITE_SECURE_SETTINGS", R.string.feat_power_battery_title)
 }
