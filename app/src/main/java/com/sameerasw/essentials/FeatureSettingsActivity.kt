@@ -226,6 +226,9 @@ class FeatureSettingsActivity : AppCompatActivity() {
                     var watchSyncSoundModeEnabled by remember {
                         mutableStateOf(prefs.getBoolean("watch_sync_sound_mode_enabled", false))
                     }
+                    var watchSyncLocationReachedEnabled by remember {
+                        mutableStateOf(prefs.getBoolean("watch_sync_location_reached_enabled", true))
+                    }
                     androidx.compose.runtime.DisposableEffect(prefs) {
                         val listener =
                             android.content.SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
@@ -233,6 +236,8 @@ class FeatureSettingsActivity : AppCompatActivity() {
                                     watchAdbWifiEnabled = p.getBoolean(key, false)
                                 } else if (key == "watch_sync_sound_mode_enabled") {
                                     watchSyncSoundModeEnabled = p.getBoolean(key, false)
+                                } else if (key == "watch_sync_location_reached_enabled") {
+                                    watchSyncLocationReachedEnabled = p.getBoolean(key, true)
                                 }
                             }
                         prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -571,6 +576,7 @@ class FeatureSettingsActivity : AppCompatActivity() {
                                             isEnabled = when (child.id) {
                                                 "Watch Wireless Debugging" -> watchAdbWifiEnabled
                                                 "Sync sound mode" -> watchSyncSoundModeEnabled
+                                                "Sync location reached status" -> watchSyncLocationReachedEnabled
                                                 else -> child.isEnabled(viewModel)
                                             },
                                             isToggleEnabled = child.isToggleEnabled(
