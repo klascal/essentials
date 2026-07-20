@@ -351,9 +351,7 @@ class LocationReachedService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val mainIntent = Intent(this, MainActivity::class.java).apply {
-            putExtra("feature", "Location reached")
-        }
+        val mainIntent = Intent(this, com.sameerasw.essentials.ui.activities.TravelCompassActivity::class.java)
         val mainPendingIntent = PendingIntent.getActivity(
             this,
             0,

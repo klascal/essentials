@@ -1,6 +1,7 @@
 package com.sameerasw.essentials.ui.activities
 
 import android.content.res.Configuration
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -328,6 +329,28 @@ private fun CompassScreen(
         // Pure black background
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(Color.Black)
+        }
+
+        // Map Button at top center
+        androidx.compose.material3.OutlinedIconButton(
+            onClick = {
+                HapticUtil.performUIHaptic(view)
+                val intent = Intent(context, com.sameerasw.essentials.FeatureSettingsActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    putExtra("feature", "Location reached")
+                }
+                context.startActivity(intent)
+            },
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 80.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, primaryColor)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.rounded_map_24),
+                contentDescription = "Map Settings",
+                tint = primaryColor
+            )
         }
 
         HorizontalPager(
