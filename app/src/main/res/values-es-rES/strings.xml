@@ -1314,6 +1314,8 @@ Cuando llegue un mensaje o alerta de una aplicación seleccionada, la Pantalla s
     <string name="feat_watch_wireless_debugging_desc">Activar de forma remota</string>
     <string name="feat_sync_sound_mode_title">Sincronizar modo de sonido</string>
     <string name="feat_sync_sound_mode_desc">Sincronizar automáticamente con el reloj</string>
+    <string name="feat_sync_location_reached_title">Sync Are we there yet status</string>
+    <string name="feat_sync_location_reached_desc">To be shown in device tile</string>
     <string name="perm_watch_write_secure_title">Ajustes seguros del reloj</string>
     <string name="perm_watch_write_secure_desc">Requiere el permiso de escritura de ajustes seguros en tu reloj. Concédelo usando el comando ADB de abajo.</string>
     <string name="cat_interaction">Interacción</string>
