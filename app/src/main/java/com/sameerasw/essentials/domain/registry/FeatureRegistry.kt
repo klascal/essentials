@@ -541,7 +541,8 @@ object FeatureRegistry {
             parentFeatureId = "Input",
             showToggle = false,
             hasMoreSettings = true,
-            permissionKeys = listOf("WRITE_SECURE_SETTINGS")
+            permissionKeys = listOf("WRITE_SECURE_SETTINGS"),
+            animationRes = R.raw.battery_motion
         ) {
             override fun isEnabled(viewModel: MainViewModel) = true
             override fun onToggle(viewModel: MainViewModel, context: Context, enabled: Boolean) {}

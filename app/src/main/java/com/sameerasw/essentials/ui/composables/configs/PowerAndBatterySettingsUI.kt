@@ -176,6 +176,17 @@ fun PowerAndBatterySettingsUI(
                 enabled = isEnabled,
                 iconRes = R.drawable.rounded_mobile_off_24
             )
+            IconToggleItem(
+                title = stringResource(R.string.label_enable_night_mode),
+                description = stringResource(R.string.desc_enable_night_mode),
+                isChecked = getBool("enable_night_mode", true),
+                onCheckedChange = {
+                    viewModel.updateBatterySaverConstant(context, "enable_night_mode", it.toString())
+                    HapticUtil.performUIHaptic(view)
+                },
+                enabled = isEnabled,
+                iconRes = R.drawable.rounded_nightlight_24
+            )
         }
 
         // --- SECTION: POWER & PERFORMANCE ---
@@ -283,17 +294,7 @@ fun PowerAndBatterySettingsUI(
                 enabled = isEnabled,
                 iconRes = R.drawable.rounded_mobile_vibrate_24
             )
-            IconToggleItem(
-                title = stringResource(R.string.label_enable_night_mode),
-                description = stringResource(R.string.desc_enable_night_mode),
-                isChecked = getBool("enable_night_mode", true),
-                onCheckedChange = {
-                    viewModel.updateBatterySaverConstant(context, "enable_night_mode", it.toString())
-                    HapticUtil.performUIHaptic(view)
-                },
-                enabled = isEnabled,
-                iconRes = R.drawable.rounded_nightlight_24
-            )
+
 
             // Sound Trigger Mode Selector
             val soundTriggerValue = getInt("soundtrigger_mode", 1)
